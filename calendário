@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema DAF - Movisafe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to bottom right, #f8fafc, #dbeafe, #e0e7ff);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .titulo-principal {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #4f46e5;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #1e293b;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #4f46e5, #3b82f6);
+            color: white;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+        }
+
+        .resumo-financeiro {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .card-resumo {
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid;
+        }
+
+        .card-resumo.recebimento {
+            background: linear-gradient(to bottom right, #f0fdf4, #d1fae5);
+            border-color: #86efac;
+        }
+
+        .card-resumo.pagamento {
+            background: linear-gradient(to bottom right, #fef2f2, #fecdd3);
+            border-color: #fca5a5;
+        }
+
+        .card-resumo.saldo {
+            background: linear-gradient(to bottom right, #eff6ff, #dbeafe);
+            border-color: #93c5fd;
+        }
+
+        .card-resumo.saldo.negativo {
+            background: linear-gradient(to bottom right, #fff7ed, #fed7aa);
+            border-color: #fdba74;
+        }
+
+        .card-resumo-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-resumo-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .card-resumo.recebimento .card-resumo-label {
+            color: #15803d;
+        }
+
+        .card-resumo.pagamento .card-resumo-label {
+            color: #991b1b;
+        }
+
+        .card-resumo.saldo .card-resumo-label {
+            color: #1e40af;
+        }
+
+        .card-resumo.saldo.negativo .card-resumo-label {
+            color: #9a3412;
+        }
+
+        .card-resumo-valor {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 0.25rem;
+        }
+
+        .card-resumo.recebimento .card-resumo-valor {
+            color: #166534;
+        }
+
+        .card-resumo.pagamento .card-resumo-valor {
+            color: #7f1d1d;
+        }
+
+        .card-resumo.saldo .card-resumo-valor {
+            color: #1e3a8a;
+        }
+
+        .card-resumo.saldo.negativo .card-resumo-valor {
+            color: #7c2d12;
+        }
+
+        .filtros {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .filtro-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .btn-filtro {
+            padding: 0.375rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-filtro:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-filtro.active {
+            background: #4f46e5;
+            color: white;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+        }
+
+        .navegacao-calendario {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: #f1f5f9;
+        }
+
+        .mes-ano {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .calendario {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+
+        .tarefas-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .tarefa-item {
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tarefa-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .tarefa-item.recebimento {
+            background: linear-gradient(to right, #f0fdf4, #d1fae5);
+            border-color: #22c55e;
+        }
+
+        .tarefa-item.recebimento:hover {
+            background: linear-gradient(to right, #dcfce7, #bbf7d0);
+        }
+
+        .tarefa-item.pagamento {
+            background: linear-gradient(to right, #fef2f2, #fecdd3);
+            border-color: #ef4444;
+        }
+
+        .tarefa-item.pagamento:hover {
+            background: linear-gradient(to right, #fee2e2, #fecaca);
+        }
+
+        .tarefa-item.concluido {
+            opacity: 0.6;
+        }
+
+        .tarefa-item.hoje {
+            box-shadow: 0 0 0 2px #a5b4fc;
+        }
+
+        .tarefa-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .tarefa-data {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 140px;
+        }
+
+        .tarefa-dia {
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+
+        .tarefa-item.recebimento .tarefa-dia {
+            color: #15803d;
+        }
+
+        .tarefa-item.pagamento .tarefa-dia {
+            color: #991b1b;
+        }
+
+        .tarefa-dia-semana {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dia-semana-text {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .badge-dia-util {
+            font-size: 0.625rem;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 0.125rem 0.375rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            margin-top: 0.125rem;
+        }
+
+        .tarefa-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tarefa-cliente {
+            font-weight: 600;
+            color: #1e293b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tarefa-descricao {
+            font-size: 0.875rem;
+            color: #64748b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tarefa-badges {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .badge-recorrente {
+            background: rgba(255, 255, 255, 0.7);
+            color: #475569;
+        }
+
+        .badge-valor {
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.75rem;
+        }
+
+        .tarefa-item.recebimento .badge-valor {
+            background: #86efac;
+            color: #166534;
+        }
+
+        .tarefa-item.pagamento .badge-valor {
+            background: #fca5a5;
+            color: #7f1d1d;
+        }
+
+        .badge-status {
+            padding: 0.25rem 0.625rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-status.pendente {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .badge-status.em_andamento {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-status.concluido {
+            background: #86efac;
+            color: #166534;
+        }
+
+        .dia-vazio {
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid #cbd5e1;
+            background: #f8fafc;
+            transition: all 0.2s;
+        }
+
+        .dia-vazio:hover {
+            background: #f1f5f9;
+        }
+
+        .dia-vazio.hoje {
+            background: linear-gradient(to right, #eef2ff, #dbeafe);
+            border-color: #6366f1;
+        }
+
+        .dia-vazio-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .dia-vazio-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .dia-vazio .tarefa-dia {
+            color: #64748b;
+        }
+
+        .dia-vazio.hoje .tarefa-dia {
+            color: #4f46e5;
+        }
+
+        .btn-add {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.375rem;
+            border-radius: 0.5rem;
+            color: #4f46e5;
+            transition: all 0.2s;
+        }
+
+        .btn-add:hover {
+            background: #eef2ff;
+        }
+
+        .mensagem-vazia {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .mensagem-vazia-text {
+            color: #64748b;
+            font-size: 1.125rem;
+            margin-top: 1rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            max-width: 42rem;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .btn-close {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn-close:hover {
+            background: #f1f5f9;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.625rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #475569;
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        .modal-footer-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-left: auto;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .tarefa-content {
+                flex-wrap: wrap;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-top">
+                <div class="header-title">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <div>
+                        <h1 class="titulo-principal">Sistema DAF - Movisafe</h1>
+                        <p class="subtitle">Diretoria Administrativa e Financeira</p>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="abrirModalNovaTarefa()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Nova Tarefa
+                </button>
+            </div>
+
+            <!-- Resumo Financeiro -->
+            <div class="resumo-financeiro">
+                <div class="card-resumo recebimento">
+                    <div class="card-resumo-content">
+                        <div>
+                            <div class="card-resumo-label">Recebimentos</div>
+                            <div class="card-resumo-valor" id="total-recebimentos">R$ 0,00</div>
+                        </div>
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="card-resumo pagamento">
+                    <div class="card-resumo-content">
+                        <div>
+                            <div class="card-resumo-label">Pagamentos</div>
+                            <div class="card-resumo-valor" id="total-pagamentos">R$ 0,00</div>
+                        </div>
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#991b1b" stroke-width="2">
+                            <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                            <polyline points="17 18 23 18 23 12"></polyline>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="card-resumo saldo" id="card-saldo">
+                    <div class="card-resumo-content">
+                        <div>
+                            <div class="card-resumo-label">Saldo</div>
+                            <div class="card-resumo-valor" id="total-saldo">R$ 0,00</div>
+                        </div>
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filtros">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            <span class="filtro-label">Filtrar por:</span>
+            <button class="btn-filtro active" onclick="setFiltro('todos')">Todos</button>
+            <button class="btn-filtro" onclick="setFiltro('recebimento')">Recebimentos</button>
+            <button class="btn-filtro" onclick="setFiltro('pagamento')">Pagamentos</button>
+        </div>
+
+        <!-- Navegação do Calendário -->
+        <div class="navegacao-calendario">
+            <button class="nav-btn" onclick="mesAnterior()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+            <div class="mes-ano" id="mes-ano"></div>
+            <button class="nav-btn" onclick="proximoMes()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Calendário -->
+        <div class="calendario">
+            <div class="tarefas-lista" id="tarefas-lista"></div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal-tarefa">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-titulo">Nova Tarefa</h3>
+                <button class="btn-close" onclick="fecharModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Data</label>
+                    <input type="date" class="form-input" id="input-data">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Cliente/Fornecedor</label>
+                    <input type="text" class="form-input" id="input-cliente" placeholder="Nome do cliente ou fornecedor">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Descrição</label>
+                    <textarea class="form-textarea" id="input-descricao" rows="3" placeholder="Descreva o procedimento..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Tipo</label>
+                        <select class="form-select" id="input-tipo">
+                            <option value="recorrente">Recorrente</option>
+                            <option value="eventual">Eventual</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Categoria</label>
+                        <select class="form-select" id="input-categoria">
+                            <option value="recebimento">Recebimento</option>
+                            <option value="pagamento">Pagamento</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Valor (R$)</label>
+                        <input type="number" step="0.01" class="form-input" id="input-valor" placeholder="0.00">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="input-status">
+                            <option value="pendente">Pendente</option>
+                            <option value="em_andamento">Em Andamento</option>
+                            <option value="concluido">Concluído</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-danger" id="btn-excluir" onclick="excluirTarefa()" style="display: none;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    Excluir
+                </button>
+
+                <div class="modal-footer-buttons">
+                    <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+                    <button class="btn btn-primary" onclick="salvarTarefa()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const mesesPT = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+                         'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        const diasSemanaPT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+        let mesAtual = new Date().getMonth();
+        let anoAtual = new Date().getFullYear();
+        let tarefas = [];
+        let filtroTipo = 'todos';
+        let tarefaSelecionada = null;
+
+        // Dados iniciais
+        function inicializarDados() {
+            tarefas = [
+                // Janeiro 2026 - Recorrentes
+                { id: 1, data: '2026-01-02', cliente: 'VINCI ENERGIES DO BRASIL', descricao: 'Emitir NFS-e e enviar por e-mail', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
+                { id: 2, data: '2026-01-02', cliente: 'EDF', descricao: 'BPO: preparar BM e enviar à gerência Movisafe', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
+                { id: 3, data: '2026-01-02', cliente: 'SAFRAN ELETRONICS & DEFENSE', descricao: 'Emitir NFS-e e enviar por e-mail', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
+                { id: 4, data: '2026-01-02', cliente: 'LABORATORIOS SERVIER', descricao: 'Emitir NFS-e e enviar por e-mail', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
+                { id: 5, data: '2026-01-02', cliente: 'THALES INTERNATIONAL', descricao: 'Emitir NFS-e e enviar por e-mail', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
+                { id: 6, data: '2026-01-02', cliente: 'SBM OFFSHORE', descricao: 'BPO: preparar BM (Portal SBM) e aguardar aprovação', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
+                { id: 7, data: '2026-01-02', cliente: 'SUBSEA7', descricao: 'Emitir NFS-e e enviar por e-mail', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
+                { id: 8, data: '2026-01-02', cliente: 'MBDA', descricao: 'Emitir NFS-e e enviar por e-mail', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
+                { id: 9, data: '2026-01-02', cliente: 'MOËT HENNESSY', descricao: 'Preparar Invoice para enviar ao comprador (França)', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
+                { id: 10, data: '2026-01-02', cliente: 'HELEXIA', descricao: 'Solicitar relação de filiais e valores à gerência', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
+                { id: 11, data: '2026-01-02', cliente: 'INTERLIRA', descricao: 'Emitir NFS-e e enviar por e-mail', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
+                { id: 12, data: '2026-01-02', cliente: 'LOCKEYBOX', descricao: 'Emitir NFS-e e enviar por e-mail', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
+                
+                // Follow-ups
+                { id: 13, data: '2026-01-05', cliente: 'EDF', descricao: 'Enviar BM revisado ao comprador (após devolutiva)', tipo: 'eventual', categoria: 'recebimento', status: 'pendente' },
+                { id: 14, data: '2026-01-06', cliente: 'SBM OFFSHORE', descricao: 'Verificar aprovação BM; se sem devolutiva, solicitar', tipo: 'eventual', categoria: 'recebimento', status: 'pendente' },
+                { id: 15, data: '2026-01-07', cliente: 'HELEXIA', descricao: 'Preparar espelhos para aprovação', tipo: 'eventual', categoria: 'recebimento', status: 'pendente' },
+                { id: 16, data: '2026-01-08', cliente: 'EDF', descricao: 'Emitir NFS-e citando número do BM', tipo: 'eventual', categoria: 'recebimento', status: 'pendente' },
+                { id: 17, data: '2026-01-08', cliente: 'SBM OFFSHORE', descricao: 'Emitir NFS-e citando PO e BM; anexar documentos', tipo: 'eventual', categoria: 'recebimento', status: 'pendente' },
+                { id: 18, data: '2026-01-08', cliente: 'HELEXIA', descricao: 'Enviar espelhos ao e-mail da Lívia', tipo: 'eventual', categoria: 'recebimento', status: 'pendente' },
+                { id: 19, data: '2026-01-16', cliente: 'HELEXIA', descricao: 'Emitir NFS-e (com números dos POs)', tipo: 'eventual', categoria: 'recebimento', status: 'pendente' },
+
+                // Pagamentos dia 5
+                { id: 20, data: '2026-01-05', cliente: 'LIGHT', descricao: 'REF. DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1349.70 },
+                { id: 21, data: '2026-01-05', cliente: 'FA SOLUÇÕES FINANCEIRAS', descricao: 'BPO FINANCEIRO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1800.00 },
+                { id: 22, data: '2026-01-05', cliente: 'OFFICIUM CONTABILIDADE', descricao: 'HONORÁRIOS CONTÁBEIS', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 3800.00 },
+                { id: 23, data: '2026-01-05', cliente: 'NORT ASSESSORIA', descricao: 'AUXÍLIO FINANCEIRO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 4500.00 },
+                { id: 24, data: '2026-01-05', cliente: 'SILVA CONSULTORIA IMOBILIÁRIA', descricao: 'ALUGUEL E CONDOMÍNIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 3432.42 },
+                { id: 25, data: '2026-01-05', cliente: 'CARLOS FERNANDO FERREIRA', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 3961.33 },
+                { id: 26, data: '2026-01-05', cliente: 'ROMÁRIO PERES FARIAS', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 5000.00 },
+                { id: 27, data: '2026-01-05', cliente: 'PASCAL JACQUES', descricao: 'PRÓ-LABORE', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1780.00 },
+                { id: 28, data: '2026-01-05', cliente: 'ANDRÉ NODEID', descricao: 'SERVIÇOS PRESTADOS', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1575.00 },
+                { id: 29, data: '2026-01-05', cliente: 'JULIO LUGATO', descricao: 'SERVIÇOS PRESTADOS', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 14000.00 },
+                { id: 30, data: '2026-01-05', cliente: 'ANDRE SILVA', descricao: 'SERVIÇOS PRESTADOS', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 14000.00 },
+                { id: 31, data: '2026-01-05', cliente: 'LUISA MARIA (DIARISTA)', descricao: 'SERVIÇOS PRESTADOS', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1440.00 },
+                { id: 32, data: '2026-01-05', cliente: 'ASSIM SAÚDE', descricao: 'REF. NOVEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1784.99 },
+                { id: 33, data: '2026-01-05', cliente: 'INSTITUTO REAP RIO', descricao: 'REF NOVEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1000.00 },
+                { id: 34, data: '2026-01-05', cliente: 'BIANCA SANTIAGO', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1945.51 },
+                { id: 35, data: '2026-01-05', cliente: 'HENRIQUE LIMA', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 15248.84 },
+                { id: 36, data: '2026-01-05', cliente: 'JESSICA RODRIGUES', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1887.39 },
+                { id: 37, data: '2026-01-05', cliente: 'JOSNIEL RODRIGUES', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1667.21 },
+                { id: 38, data: '2026-01-05', cliente: 'LAIS DA SILVA', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1926.14 },
+                { id: 39, data: '2026-01-05', cliente: 'LETICIA PINHEIRO', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1635.49 },
+                { id: 40, data: '2026-01-05', cliente: 'LOAN HEITOR', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 2291.41 },
+                { id: 41, data: '2026-01-05', cliente: 'LUIS CARLOS BUTTER', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 2124.15 },
+                { id: 42, data: '2026-01-05', cliente: 'IBB TI', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 600.00 },
+
+                // Pagamentos dia 12
+                { id: 43, data: '2026-01-12', cliente: 'TELLE CAL', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 149.00 },
+                { id: 44, data: '2026-01-12', cliente: 'AUTREMENT DIT RIO', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 504.00 },
+                { id: 45, data: '2026-01-12', cliente: 'SISTEMA NIBO', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 160.00 },
+
+                // Pagamentos dia 15
+                { id: 46, data: '2026-01-15', cliente: 'ANNE CATHERINE', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1620.00 },
+                { id: 47, data: '2026-01-15', cliente: 'REIS & NERY', descricao: 'HONORÁRIOS ADVOCATÍCIOS 11/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1000.00 },
+                { id: 48, data: '2026-01-15', cliente: 'OFFICIUM CONTABILIDADE', descricao: 'SEGUNDA PARCELA DO ADICIONAL DE 2025', tipo: 'eventual', categoria: 'pagamento', status: 'pendente', valor: 791.67 },
+                { id: 49, data: '2026-01-15', cliente: 'TARGETHOST', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 149.90 },
+
+                // Pagamentos dia 19
+                { id: 50, data: '2026-01-19', cliente: 'SIMPLES NACIONAL SMART CICC', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1723.55 },
+                { id: 51, data: '2026-01-19', cliente: 'FGTS MOVISAFE', descricao: 'REF DEZEMBRO/2025 PROVISÃO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 873.29 },
+                { id: 52, data: '2026-01-19', cliente: 'FGTS SMART CICC', descricao: 'REF DEZEMBRO/2025 PROVISÃO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 2936.99 },
+                { id: 53, data: '2026-01-19', cliente: 'INSS MOVISAFE', descricao: 'REF DEZEMBRO/2025 PROVISÃO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 10382.92 },
+                { id: 54, data: '2026-01-19', cliente: 'INSS SMART CICC', descricao: 'REF DEZEMBRO/2025 PROVISÃO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 2397.24 },
+                { id: 55, data: '2026-01-19', cliente: 'SISTEMA OMIE', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 282.00 },
+
+                // Pagamentos dia 20
+                { id: 56, data: '2026-01-20', cliente: 'VIVO EMPRESA', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 153.09 },
+
+                // Pagamentos dia 23
+                { id: 57, data: '2026-01-23', cliente: 'NET2PHONE', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 940.76 },
+
+                // Pagamentos dia 26
+                { id: 58, data: '2026-01-26', cliente: 'CBD BILHETE (MOVISAFE)', descricao: 'REF VALE TRANSPORTE DE JANEIRO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 761.20 },
+                { id: 59, data: '2026-01-26', cliente: 'PLUBEE SODEXO', descricao: 'REF DEZEMBRO/2025 VALE REFEIÇÃO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1827.00 },
+                { id: 60, data: '2026-01-26', cliente: 'CBD BILHETE (MOVISAFE)', descricao: 'REF VALE TRANSPORTE JANEIRO (PROVISÃO)', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1485.50 },
+                { id: 61, data: '2026-01-26', cliente: 'PLUBEE SODEXO', descricao: 'REF DEZEMBRO/2025 VALE REFEIÇÃO (PROVISÃO)', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 3654.00 },
+                { id: 62, data: '2026-01-26', cliente: 'EUROPART', descricao: 'ACORDO PARCELA 05/24', tipo: 'eventual', categoria: 'pagamento', status: 'pendente', valor: 1992.35 },
+                { id: 63, data: '2026-01-26', cliente: 'MVX SOLUCOES', descricao: 'MANUTENÇÃO DE SISTEMA PARCELA 6/24', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 448.17 },
+                { id: 64, data: '2026-01-26', cliente: 'FATURA CLARO', descricao: 'REF. DEZEMBRO (LINHA NOVA)', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 162.69 },
+                { id: 65, data: '2026-01-26', cliente: 'ULTRA PAPEL', descricao: 'REF DEZEMBRO DE 2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 220.00 },
+                { id: 66, data: '2026-01-26', cliente: 'FATURA CLARO', descricao: 'REF. DEZEMBRO (LINHA NOVA) - 2', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 111.86 },
+
+                // Pagamentos dia 30
+                { id: 67, data: '2026-01-30', cliente: 'RECEITA FEDERAL', descricao: 'PARCELAMENTO SIMPLIFICADO 43/60', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 4300.14 },
+                { id: 68, data: '2026-01-30', cliente: 'RECEITA FEDERAL', descricao: 'PARCELAMENTO SIMPLES NACIONAL 30/60', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 5662.70 },
+                { id: 69, data: '2026-01-30', cliente: 'RECEITA FEDERAL', descricao: 'PARCELAMENTO SIMPLES NACIONAL PERT 58/145', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 2193.54 },
+                { id: 70, data: '2026-01-30', cliente: 'PROCURADORIA GERAL INSC 07948916', descricao: 'PARCELAMENTO 31/60', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 2291.95 },
+                { id: 71, data: '2026-01-30', cliente: 'PROCURADORIA GERAL INSC 13597799', descricao: 'PARCELAMENTO 119/120', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 14981.84 },
+                { id: 72, data: '2026-01-30', cliente: 'PROCURADORIA GERAL INSC 13850074', descricao: 'PARCELAMENTO 120/120', tipo: 'eventual', categoria: 'pagamento', status: 'pendente', valor: 1231.37 }
+            ];
+            
+            renderizar();
+        }
+
+        function renderizar() {
+            atualizarMesAno();
+            renderizarCalendario();
+            calcularTotais();
+        }
+
+        function atualizarMesAno() {
+            document.getElementById('mes-ano').textContent = `${mesesPT[mesAtual]} ${anoAtual}`;
+        }
+
+        function obterDiasDoMes() {
+            const ultimoDia = new Date(anoAtual, mesAtual + 1, 0).getDate();
+            const dias = [];
+            for (let dia = 1; dia <= ultimoDia; dia++) {
+                dias.push(dia);
+            }
+            return dias;
+        }
+
+        function obterTarefasDoDia(dia) {
+            const dataStr = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+            const tarefasDoDia = [];
+            
+            // Adicionar tarefas diretas do dia
+            tarefas.filter(t => t.data === dataStr).forEach(t => tarefasDoDia.push(t));
+            
+            // Adicionar tarefas recorrentes de outros meses
+            tarefas.filter(t => t.tipo === 'recorrente').forEach(tarefa => {
+                const [anoOriginal, mesOriginal, diaOriginal] = tarefa.data.split('-').map(Number);
+                
+                // Se o dia corresponde ao dia da tarefa recorrente
+                if (parseInt(diaOriginal) === dia) {
+                    // Verificar se não existe já uma tarefa cadastrada para este dia/mês
+                    const jaExiste = tarefasDoDia.some(t => 
+                        t.cliente === tarefa.cliente && 
+                        t.descricao === tarefa.descricao
+                    );
+                    
+                    if (!jaExiste) {
+                        // Criar uma cópia da tarefa para o mês atual
+                        const tarefaRecorrente = {
+                            ...tarefa,
+                            id: `${tarefa.id}-${anoAtual}-${mesAtual}`,
+                            data: dataStr,
+                            geradaAutomaticamente: true
+                        };
+                        tarefasDoDia.push(tarefaRecorrente);
+                    }
+                }
+            });
+            
+            return tarefasDoDia;
+        }
+
+        function ehHoje(dia) {
+            const hoje = new Date();
+            return dia === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear();
+        }
+
+        function ehPrimeiroDiaUtil(dia) {
+            const data = new Date(anoAtual, mesAtual, dia);
+            const diaSemana = data.getDay();
+            return dia === 1 || (dia <= 7 && diaSemana >= 1 && diaSemana <= 5);
+        }
+
+        function renderizarCalendario() {
+            const lista = document.getElementById('tarefas-lista');
+            lista.innerHTML = '';
+            
+            const dias = obterDiasDoMes();
+            let temTarefas = false;
+
+            dias.forEach(dia => {
+                const tarefasDoDia = obterTarefasDoDia(dia);
+                const tarefasFiltradas = filtroTipo === 'todos' 
+                    ? tarefasDoDia 
+                    : tarefasDoDia.filter(t => t.categoria === filtroTipo);
+
+                const dataCompleta = new Date(anoAtual, mesAtual, dia);
+                const diaSemana = diasSemanaPT[dataCompleta.getDay()];
+                const primeiroDiaUtil = ehPrimeiroDiaUtil(dia);
+
+                if (tarefasFiltradas.length === 0) {
+                    const diaDiv = document.createElement('div');
+                    diaDiv.className = `dia-vazio ${ehHoje(dia) ? 'hoje' : ''}`;
+                    diaDiv.innerHTML = `
+                        <div class="dia-vazio-content">
+                            <div class="dia-vazio-info">
+                                <span class="tarefa-dia">${String(dia).padStart(2, '0')}</span>
+                                <div class="tarefa-dia-semana">
+                                    <span class="dia-semana-text">${diaSemana}</span>
+                                    ${primeiroDiaUtil ? '<span class="badge-dia-util">1º Dia Útil</span>' : ''}
+                                </div>
+                            </div>
+                            <button class="btn-add" onclick="abrirModalNovaTarefa(${dia})">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                    lista.appendChild(diaDiv);
+                } else {
+                    temTarefas = true;
+                    tarefasFiltradas.forEach((tarefa, index) => {
+                        const tarefaDiv = document.createElement('div');
+                        tarefaDiv.className = `tarefa-item ${tarefa.categoria} ${tarefa.status === 'concluido' ? 'concluido' : ''} ${ehHoje(dia) ? 'hoje' : ''}`;
+                        tarefaDiv.onclick = () => editarTarefa(tarefa);
+                        
+                        tarefaDiv.innerHTML = `
+                            <div class="tarefa-content">
+                                <div class="tarefa-data">
+                                    <span class="tarefa-dia">${String(dia).padStart(2, '0')}</span>
+                                    <div class="tarefa-dia-semana">
+                                        <span class="dia-semana-text">${diaSemana}</span>
+                                        ${index === 0 && primeiroDiaUtil ? '<span class="badge-dia-util">1º Dia Útil</span>' : ''}
+                                    </div>
+                                </div>
+                                
+                                <div class="tarefa-info">
+                                    <div class="tarefa-cliente">${tarefa.cliente}</div>
+                                    <div class="tarefa-descricao">${tarefa.descricao}</div>
+                                </div>
+                                
+                                <div class="tarefa-badges">
+                                    ${tarefa.tipo === 'recorrente' ? `
+                                        <div class="badge badge-recorrente">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <polyline points="12 6 12 12 16 14"></polyline>
+                                            </svg>
+                                            Recorrente
+                                        </div>
+                                    ` : ''}
+                                    
+                                    ${tarefa.geradaAutomaticamente ? `
+                                        <div class="badge badge-recorrente" style="background: rgba(147, 197, 253, 0.5); color: #1e40af;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polyline points="23 4 23 10 17 10"></polyline>
+                                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                                            </svg>
+                                            Auto
+                                        </div>
+                                    ` : ''}
+                                    
+                                    ${tarefa.valor ? `
+                                        <div class="badge badge-valor">
+                                            ${parseFloat(tarefa.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                        </div>
+                                    ` : ''}
+                                    
+                                    <div class="badge badge-status ${tarefa.status}">
+                                        ${tarefa.status === 'concluido' ? '✓ Concluído' : 
+                                          tarefa.status === 'em_andamento' ? '⟳ Em Andamento' : '○ Pendente'}
+                                    </div>
+                                    
+                                    <button class="btn-add" onclick="event.stopPropagation(); editarTarefa(${JSON.stringify(tarefa).replace(/"/g, '&quot;')})">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        
+                        lista.appendChild(tarefaDiv);
+                    });
+                }
+            });
+
+            if (!temTarefas) {
+                lista.innerHTML = `
+                    <div class="mensagem-vazia">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin: 0 auto;">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <p class="mensagem-vazia-text">Nenhuma tarefa encontrada para este mês</p>
+                        <button class="btn btn-primary" onclick="abrirModalNovaTarefa()" style="margin-top: 1rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Adicionar Primeira Tarefa
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function calcularTotais() {
+            const tarefasMes = tarefas.filter(t => {
+                const [ano, mes] = t.data.split('-').map(Number);
+                return ano === anoAtual && mes === mesAtual + 1;
+            });
+
+            const recebimentos = tarefasMes
+                .filter(t => t.categoria === 'recebimento' && t.valor)
+                .reduce((acc, t) => acc + parseFloat(t.valor || 0), 0);
+
+            const pagamentos = tarefasMes
+                .filter(t => t.categoria === 'pagamento' && t.valor)
+                .reduce((acc, t) => acc + parseFloat(t.valor || 0), 0);
+
+            const saldo = recebimentos - pagamentos;
+
+            document.getElementById('total-recebimentos').textContent = 
+                recebimentos.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('total-pagamentos').textContent = 
+                pagamentos.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('total-saldo').textContent = 
+                saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+            const cardSaldo = document.getElementById('card-saldo');
+            if (saldo < 0) {
+                cardSaldo.classList.add('negativo');
+            } else {
+                cardSaldo.classList.remove('negativo');
+            }
+        }
+
+        function mesAnterior() {
+            if (mesAtual === 0) {
+                mesAtual = 11;
+                anoAtual--;
+            } else {
+                mesAtual--;
+            }
+            renderizar();
+        }
+
+        function proximoMes() {
+            if (mesAtual === 11) {
+                mesAtual = 0;
+                anoAtual++;
+            } else {
+                mesAtual++;
+            }
+            renderizar();
+        }
+
+        function setFiltro(tipo) {
+            filtroTipo = tipo;
+            
+            document.querySelectorAll('.btn-filtro').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+            renderizarCalendario();
+        }
+
+        function abrirModalNovaTarefa(dia = null) {
+            tarefaSelecionada = null;
+            document.getElementById('modal-titulo').textContent = 'Nova Tarefa';
+            document.getElementById('input-data').value = dia 
+                ? `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`
+                : '';
+            document.getElementById('input-cliente').value = '';
+            document.getElementById('input-descricao').value = '';
+            document.getElementById('input-tipo').value = 'eventual';
+            document.getElementById('input-categoria').value = 'recebimento';
+            document.getElementById('input-valor').value = '';
+            document.getElementById('input-status').value = 'pendente';
+            document.getElementById('btn-excluir').style.display = 'none';
+            document.getElementById('modal-tarefa').classList.add('active');
+        }
+
+        function editarTarefa(tarefa) {
+            if (typeof tarefa === 'string') {
+                tarefa = JSON.parse(tarefa.replace(/&quot;/g, '"'));
+            }
+            
+            tarefaSelecionada = tarefa;
+            document.getElementById('modal-titulo').textContent = 'Editar Tarefa';
+            document.getElementById('input-data').value = tarefa.data;
+            document.getElementById('input-cliente').value = tarefa.cliente;
+            document.getElementById('input-descricao').value = tarefa.descricao;
+            document.getElementById('input-tipo').value = tarefa.tipo;
+            document.getElementById('input-categoria').value = tarefa.categoria;
+            document.getElementById('input-valor').value = tarefa.valor || '';
+            document.getElementById('input-status').value = tarefa.status;
+            document.getElementById('btn-excluir').style.display = 'inline-flex';
+            document.getElementById('modal-tarefa').classList.add('active');
+        }
+
+        function fecharModal() {
+            document.getElementById('modal-tarefa').classList.remove('active');
+            tarefaSelecionada = null;
+        }
+
+        function salvarTarefa() {
+            const novaTarefa = {
+                id: tarefaSelecionada ? tarefaSelecionada.id : Date.now(),
+                data: document.getElementById('input-data').value,
+                cliente: document.getElementById('input-cliente').value,
+                descricao: document.getElementById('input-descricao').value,
+                tipo: document.getElementById('input-tipo').value,
+                categoria: document.getElementById('input-categoria').value,
+                valor: document.getElementById('input-valor').value ? parseFloat(document.getElementById('input-valor').value) : null,
+                status: document.getElementById('input-status').value
+            };
+
+            if (tarefaSelecionada) {
+                // Se a tarefa foi gerada automaticamente, criar uma nova ao invés de editar
+                if (tarefaSelecionada.geradaAutomaticamente) {
+                    // Remover o ID composto e criar um ID único
+                    novaTarefa.id = Date.now();
+                    tarefas.push(novaTarefa);
+                } else {
+                    const index = tarefas.findIndex(t => t.id === tarefaSelecionada.id);
+                    if (index !== -1) {
+                        tarefas[index] = novaTarefa;
+                    }
+                }
+            } else {
+                tarefas.push(novaTarefa);
+            }
+
+            fecharModal();
+            renderizar();
+        }
+
+        function excluirTarefa() {
+            if (confirm('Deseja realmente excluir esta tarefa?')) {
+                // Se a tarefa foi gerada automaticamente, não excluir do array (ela é virtual)
+                // Apenas fechar o modal
+                if (!tarefaSelecionada.geradaAutomaticamente) {
+                    tarefas = tarefas.filter(t => t.id !== tarefaSelecionada.id);
+                }
+                fecharModal();
+                renderizar();
+            }
+        }
+
+        // Inicializar
+        inicializarDados();
+    </script>
+</body>
+</html>
