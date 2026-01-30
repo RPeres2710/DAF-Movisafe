@@ -912,19 +912,7 @@
                 { id: 59, data: '2026-01-26', cliente: 'PLUBEE SODEXO', descricao: 'REF DEZEMBRO/2025 VALE REFEIÇÃO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1827.00 },
                 { id: 60, data: '2026-01-26', cliente: 'CBD BILHETE (MOVISAFE)', descricao: 'REF VALE TRANSPORTE JANEIRO (PROVISÃO)', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1485.50 },
                 { id: 61, data: '2026-01-26', cliente: 'PLUBEE SODEXO', descricao: 'REF DEZEMBRO/2025 VALE REFEIÇÃO (PROVISÃO)', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 3654.00 },
-                { id: 62, data: '2026-01-26', cliente: 'EUROPART', descricao: 'ACORDO PARCELA 05/24', tipo: 'eventual', categoria: 'pagamento', status: 'pendente', valor: 1992.35 },
-                { id: 63, data: '2026-01-26', cliente: 'MVX SOLUCOES', descricao: 'MANUTENÇÃO DE SISTEMA PARCELA 6/24', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 448.17 },
-                { id: 64, data: '2026-01-26', cliente: 'FATURA CLARO', descricao: 'REF. DEZEMBRO (LINHA NOVA)', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 162.69 },
-                { id: 65, data: '2026-01-26', cliente: 'ULTRA PAPEL', descricao: 'REF DEZEMBRO DE 2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 220.00 },
-                { id: 66, data: '2026-01-26', cliente: 'FATURA CLARO', descricao: 'REF. DEZEMBRO (LINHA NOVA) - 2', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 111.86 },
-
-                // Pagamentos dia 30
-                { id: 67, data: '2026-01-30', cliente: 'RECEITA FEDERAL', descricao: 'PARCELAMENTO SIMPLIFICADO 43/60', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 4300.14 },
-                { id: 68, data: '2026-01-30', cliente: 'RECEITA FEDERAL', descricao: 'PARCELAMENTO SIMPLES NACIONAL 30/60', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 5662.70 },
-                { id: 69, data: '2026-01-30', cliente: 'RECEITA FEDERAL', descricao: 'PARCELAMENTO SIMPLES NACIONAL PERT 58/145', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 2193.54 },
-                { id: 70, data: '2026-01-30', cliente: 'PROCURADORIA GERAL INSC 07948916', descricao: 'PARCELAMENTO 31/60', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 2291.95 },
-                { id: 71, data: '2026-01-30', cliente: 'PROCURADORIA GERAL INSC 13597799', descricao: 'PARCELAMENTO 119/120', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 14981.84 },
-                { id: 72, data: '2026-01-30', cliente: 'PROCURADORIA GERAL INSC 13850074', descricao: 'PARCELAMENTO 120/120', tipo: 'eventual', categoria: 'pagamento', status: 'pendente', valor: 1231.37 }
+                { id: 62, data: '2026-01-26', cliente: 'EUROPART', descricao: 'ACORDO PARCELA 05/24', tipo: 'eventual', categoria: 'pagamento', status: 'pendente', valor: 1992.35 }
             ];
             
             renderizar();
@@ -951,37 +939,7 @@
 
         function obterTarefasDoDia(dia) {
             const dataStr = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-            const tarefasDoDia = [];
-            
-            // Adicionar tarefas diretas do dia
-            tarefas.filter(t => t.data === dataStr).forEach(t => tarefasDoDia.push(t));
-            
-            // Adicionar tarefas recorrentes de outros meses
-            tarefas.filter(t => t.tipo === 'recorrente').forEach(tarefa => {
-                const [anoOriginal, mesOriginal, diaOriginal] = tarefa.data.split('-').map(Number);
-                
-                // Se o dia corresponde ao dia da tarefa recorrente
-                if (parseInt(diaOriginal) === dia) {
-                    // Verificar se não existe já uma tarefa cadastrada para este dia/mês
-                    const jaExiste = tarefasDoDia.some(t => 
-                        t.cliente === tarefa.cliente && 
-                        t.descricao === tarefa.descricao
-                    );
-                    
-                    if (!jaExiste) {
-                        // Criar uma cópia da tarefa para o mês atual
-                        const tarefaRecorrente = {
-                            ...tarefa,
-                            id: `${tarefa.id}-${anoAtual}-${mesAtual}`,
-                            data: dataStr,
-                            geradaAutomaticamente: true
-                        };
-                        tarefasDoDia.push(tarefaRecorrente);
-                    }
-                }
-            });
-            
-            return tarefasDoDia;
+            return tarefas.filter(t => t.data === dataStr);
         }
 
         function ehHoje(dia) {
@@ -1063,16 +1021,6 @@
                                                 <polyline points="12 6 12 12 16 14"></polyline>
                                             </svg>
                                             Recorrente
-                                        </div>
-                                    ` : ''}
-                                    
-                                    ${tarefa.geradaAutomaticamente ? `
-                                        <div class="badge badge-recorrente" style="background: rgba(147, 197, 253, 0.5); color: #1e40af;">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <polyline points="23 4 23 10 17 10"></polyline>
-                                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                                            </svg>
-                                            Auto
                                         </div>
                                     ` : ''}
                                     
@@ -1238,17 +1186,8 @@
             };
 
             if (tarefaSelecionada) {
-                // Se a tarefa foi gerada automaticamente, criar uma nova ao invés de editar
-                if (tarefaSelecionada.geradaAutomaticamente) {
-                    // Remover o ID composto e criar um ID único
-                    novaTarefa.id = Date.now();
-                    tarefas.push(novaTarefa);
-                } else {
-                    const index = tarefas.findIndex(t => t.id === tarefaSelecionada.id);
-                    if (index !== -1) {
-                        tarefas[index] = novaTarefa;
-                    }
-                }
+                const index = tarefas.findIndex(t => t.id === tarefaSelecionada.id);
+                tarefas[index] = novaTarefa;
             } else {
                 tarefas.push(novaTarefa);
             }
@@ -1259,11 +1198,7 @@
 
         function excluirTarefa() {
             if (confirm('Deseja realmente excluir esta tarefa?')) {
-                // Se a tarefa foi gerada automaticamente, não excluir do array (ela é virtual)
-                // Apenas fechar o modal
-                if (!tarefaSelecionada.geradaAutomaticamente) {
-                    tarefas = tarefas.filter(t => t.id !== tarefaSelecionada.id);
-                }
+                tarefas = tarefas.filter(t => t.id !== tarefaSelecionada.id);
                 fecharModal();
                 renderizar();
             }
