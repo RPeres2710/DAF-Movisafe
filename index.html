@@ -3,642 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema DAF - Movisafe</title>
+    <title>Sistema DAF - Movisafe | Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            background: linear-gradient(to bottom right, #f8fafc, #dbeafe, #e0e7ff);
-            min-height: 100vh;
-            padding: 2rem 1rem;
-        }
-
-        .titulo-principal {
-            font-family: 'Outfit', sans-serif;
-            font-weight: 700;
-        }
-
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-
-        .header {
-            background: white;
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            border-left: 4px solid #4f46e5;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        h1 {
-            font-size: 2rem;
-            color: #1e293b;
-        }
-
-        .subtitle {
-            color: #64748b;
-            font-size: 0.875rem;
-        }
-
-        .btn {
-            padding: 0.625rem 1.25rem;
-            border-radius: 0.75rem;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(to right, #4f46e5, #3b82f6);
-            color: white;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
-        }
-
-        .resumo-financeiro {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .card-resumo {
-            padding: 1rem;
-            border-radius: 0.75rem;
-            border: 1px solid;
-        }
-
-        .card-resumo.recebimento {
-            background: linear-gradient(to bottom right, #f0fdf4, #d1fae5);
-            border-color: #86efac;
-        }
-
-        .card-resumo.pagamento {
-            background: linear-gradient(to bottom right, #fef2f2, #fecdd3);
-            border-color: #fca5a5;
-        }
-
-        .card-resumo.saldo {
-            background: linear-gradient(to bottom right, #eff6ff, #dbeafe);
-            border-color: #93c5fd;
-        }
-
-        .card-resumo.saldo.negativo {
-            background: linear-gradient(to bottom right, #fff7ed, #fed7aa);
-            border-color: #fdba74;
-        }
-
-        .card-resumo-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-resumo-label {
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .card-resumo.recebimento .card-resumo-label {
-            color: #15803d;
-        }
-
-        .card-resumo.pagamento .card-resumo-label {
-            color: #991b1b;
-        }
-
-        .card-resumo.saldo .card-resumo-label {
-            color: #1e40af;
-        }
-
-        .card-resumo.saldo.negativo .card-resumo-label {
-            color: #9a3412;
-        }
-
-        .card-resumo-valor {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-top: 0.25rem;
-        }
-
-        .card-resumo.recebimento .card-resumo-valor {
-            color: #166534;
-        }
-
-        .card-resumo.pagamento .card-resumo-valor {
-            color: #7f1d1d;
-        }
-
-        .card-resumo.saldo .card-resumo-valor {
-            color: #1e3a8a;
-        }
-
-        .card-resumo.saldo.negativo .card-resumo-valor {
-            color: #7c2d12;
-        }
-
-        .filtros {
-            background: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-        }
-
-        .filtro-label {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #374151;
-        }
-
-        .btn-filtro {
-            padding: 0.375rem 1rem;
-            border-radius: 0.5rem;
-            border: none;
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s;
-            background: #f1f5f9;
-            color: #475569;
-        }
-
-        .btn-filtro:hover {
-            background: #e2e8f0;
-        }
-
-        .btn-filtro.active {
-            background: #4f46e5;
-            color: white;
-            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
-        }
-
-        .navegacao-calendario {
-            background: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-btn {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
-        }
-
-        .nav-btn:hover {
-            background: #f1f5f9;
-        }
-
-        .mes-ano {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1e293b;
-        }
-
-        .calendario {
-            background: white;
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-        }
-
-        .tarefas-lista {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .tarefa-item {
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            border-left: 4px solid;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .tarefa-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-        }
-
-        .tarefa-item.recebimento {
-            background: linear-gradient(to right, #f0fdf4, #d1fae5);
-            border-color: #22c55e;
-        }
-
-        .tarefa-item.recebimento:hover {
-            background: linear-gradient(to right, #dcfce7, #bbf7d0);
-        }
-
-        .tarefa-item.pagamento {
-            background: linear-gradient(to right, #fef2f2, #fecdd3);
-            border-color: #ef4444;
-        }
-
-        .tarefa-item.pagamento:hover {
-            background: linear-gradient(to right, #fee2e2, #fecaca);
-        }
-
-        .tarefa-item.concluido {
-            opacity: 0.6;
-        }
-
-        .tarefa-item.hoje {
-            box-shadow: 0 0 0 2px #a5b4fc;
-        }
-
-        .tarefa-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-
-        .tarefa-data {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            min-width: 140px;
-        }
-
-        .tarefa-dia {
-            font-size: 1.125rem;
-            font-weight: 700;
-        }
-
-        .tarefa-item.recebimento .tarefa-dia {
-            color: #15803d;
-        }
-
-        .tarefa-item.pagamento .tarefa-dia {
-            color: #991b1b;
-        }
-
-        .tarefa-dia-semana {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .dia-semana-text {
-            font-size: 0.75rem;
-            color: #64748b;
-        }
-
-        .badge-dia-util {
-            font-size: 0.625rem;
-            background: #dbeafe;
-            color: #1e40af;
-            padding: 0.125rem 0.375rem;
-            border-radius: 9999px;
-            font-weight: 500;
-            margin-top: 0.125rem;
-        }
-
-        .tarefa-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .tarefa-cliente {
-            font-weight: 600;
-            color: #1e293b;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .tarefa-descricao {
-            font-size: 0.875rem;
-            color: #64748b;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .tarefa-badges {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .badge-recorrente {
-            background: rgba(255, 255, 255, 0.7);
-            color: #475569;
-        }
-
-        .badge-valor {
-            font-weight: 600;
-            font-size: 0.875rem;
-            padding: 0.25rem 0.75rem;
-        }
-
-        .tarefa-item.recebimento .badge-valor {
-            background: #86efac;
-            color: #166534;
-        }
-
-        .tarefa-item.pagamento .badge-valor {
-            background: #fca5a5;
-            color: #7f1d1d;
-        }
-
-        .badge-status {
-            padding: 0.25rem 0.625rem;
-            border-radius: 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .badge-status.pendente {
-            background: #e2e8f0;
-            color: #475569;
-        }
-
-        .badge-status.em_andamento {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .badge-status.concluido {
-            background: #86efac;
-            color: #166534;
-        }
-
-        .dia-vazio {
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            border-left: 4px solid #cbd5e1;
-            background: #f8fafc;
-            transition: all 0.2s;
-        }
-
-        .dia-vazio:hover {
-            background: #f1f5f9;
-        }
-
-        .dia-vazio.hoje {
-            background: linear-gradient(to right, #eef2ff, #dbeafe);
-            border-color: #6366f1;
-        }
-
-        .dia-vazio-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .dia-vazio-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .dia-vazio .tarefa-dia {
-            color: #64748b;
-        }
-
-        .dia-vazio.hoje .tarefa-dia {
-            color: #4f46e5;
-        }
-
-        .btn-add {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 0.375rem;
-            border-radius: 0.5rem;
-            color: #4f46e5;
-            transition: all 0.2s;
-        }
-
-        .btn-add:hover {
-            background: #eef2ff;
-        }
-
-        .mensagem-vazia {
-            text-align: center;
-            padding: 3rem 0;
-        }
-
-        .mensagem-vazia-text {
-            color: #64748b;
-            font-size: 1.125rem;
-            margin-top: 1rem;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 50;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 1rem;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            max-width: 42rem;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1e293b;
-        }
-
-        .btn-close {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
-        }
-
-        .btn-close:hover {
-            background: #f1f5f9;
-        }
-
-        .modal-body {
-            padding: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-input,
-        .form-select,
-        .form-textarea {
-            width: 100%;
-            padding: 0.625rem 1rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            transition: all 0.2s;
-        }
-
-        .form-input:focus,
-        .form-select:focus,
-        .form-textarea:focus {
-            outline: none;
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-        }
-
-        .modal-footer {
-            padding: 1.5rem;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .btn-danger {
-            background: #ef4444;
-            color: white;
-            padding: 0.625rem 1.25rem;
-            border-radius: 0.75rem;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-danger:hover {
-            background: #dc2626;
-        }
-
-        .btn-secondary {
-            background: #e2e8f0;
-            color: #475569;
-            padding: 0.625rem 1.25rem;
-            border-radius: 0.75rem;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .btn-secondary:hover {
-            background: #cbd5e1;
-        }
-
-        .modal-footer-buttons {
-            display: flex;
-            gap: 0.75rem;
-            margin-left: auto;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: linear-gradient(to bottom right, #f8fafc, #dbeafe, #e0e7ff); min-height: 100vh; padding: 2rem 1rem; }
+        .titulo-principal { font-family: 'Outfit', sans-serif; font-weight: 700; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { background: white; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); padding: 1.5rem; margin-bottom: 2rem; border-left: 4px solid #4f46e5; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+        .header-title { display: flex; align-items: center; gap: 1rem; }
+        h1 { font-size: 2rem; color: #1e293b; }
+        .subtitle { color: #64748b; font-size: 0.875rem; }
+        .btn { padding: 0.625rem 1.25rem; border-radius: 0.75rem; border: none; cursor: pointer; font-weight: 500; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-primary { background: linear-gradient(to right, #4f46e5, #3b82f6); color: white; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4); }
+        .btn-secondary { background: #e2e8f0; color: #475569; }
+        .btn-secondary:hover { background: #cbd5e1; }
+        .tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; background: white; padding: 0.5rem; border-radius: 0.75rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
+        .tab-btn { flex: 1; padding: 0.75rem 1.5rem; border: none; background: transparent; border-radius: 0.5rem; cursor: pointer; font-weight: 500; color: #64748b; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .tab-btn:hover { background: #f1f5f9; }
+        .tab-btn.active { background: linear-gradient(to right, #4f46e5, #3b82f6); color: white; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .card-chart { background: white; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); padding: 1.5rem; }
+        .card-chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .card-chart-title { font-size: 1.125rem; font-weight: 600; color: #1e293b; }
+        .card-chart-subtitle { font-size: 0.75rem; color: #64748b; margin-top: 0.25rem; }
+        .chart-container { position: relative; height: 300px; }
+        .chart-container.tall { height: 400px; }
+        .resumo-financeiro { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+        .card-resumo { padding: 1rem; border-radius: 0.75rem; border: 1px solid; }
+        .card-resumo.recebimento { background: linear-gradient(to bottom right, #f0fdf4, #d1fae5); border-color: #86efac; }
+        .card-resumo.pagamento { background: linear-gradient(to bottom right, #fef2f2, #fecdd3); border-color: #fca5a5; }
+        .card-resumo.saldo { background: linear-gradient(to bottom right, #eff6ff, #dbeafe); border-color: #93c5fd; }
+        .card-resumo.saldo.negativo { background: linear-gradient(to bottom right, #fff7ed, #fed7aa); border-color: #fdba74; }
+        .card-resumo-content { display: flex; justify-content: space-between; align-items: center; }
+        .card-resumo-label { font-size: 0.875rem; font-weight: 500; }
+        .card-resumo.recebimento .card-resumo-label { color: #15803d; }
+        .card-resumo.pagamento .card-resumo-label { color: #991b1b; }
+        .card-resumo.saldo .card-resumo-label { color: #1e40af; }
+        .card-resumo.saldo.negativo .card-resumo-label { color: #9a3412; }
+        .card-resumo-valor { font-size: 1.5rem; font-weight: 700; margin-top: 0.25rem; }
+        .card-resumo.recebimento .card-resumo-valor { color: #166534; }
+        .card-resumo.pagamento .card-resumo-valor { color: #7f1d1d; }
+        .card-resumo.saldo .card-resumo-valor { color: #1e3a8a; }
+        .card-resumo.saldo.negativo .card-resumo-valor { color: #7c2d12; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-card { background: white; padding: 1rem; border-radius: 0.75rem; border-left: 4px solid; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
+        .stat-card.blue { border-color: #3b82f6; }
+        .stat-card.green { border-color: #22c55e; }
+        .stat-card.red { border-color: #ef4444; }
+        .stat-card.purple { border-color: #a855f7; }
+        .stat-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-top: 0.25rem; }
+        .filtros { background: white; border-radius: 0.75rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+        .filtro-label { font-size: 0.875rem; font-weight: 500; color: #374151; }
+        .btn-filtro { padding: 0.375rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; background: #f1f5f9; color: #475569; }
+        .btn-filtro:hover { background: #e2e8f0; }
+        .btn-filtro.active { background: #4f46e5; color: white; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3); }
+        .navegacao-calendario { background: white; border-radius: 0.75rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); padding: 1rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .nav-btn { background: transparent; border: none; cursor: pointer; padding: 0.5rem; border-radius: 0.5rem; transition: all 0.2s; }
+        .nav-btn:hover { background: #f1f5f9; }
+        .mes-ano { font-size: 1.5rem; font-weight: 700; color: #1e293b; }
+        .calendario { background: white; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); padding: 1.5rem; }
+        .tarefas-lista { display: flex; flex-direction: column; gap: 0.25rem; }
+        .tarefa-item { padding: 0.75rem; border-radius: 0.5rem; border-left: 4px solid; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .tarefa-item:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); }
+        .tarefa-item.recebimento { background: linear-gradient(to right, #f0fdf4, #d1fae5); border-color: #22c55e; }
+        .tarefa-item.recebimento:hover { background: linear-gradient(to right, #dcfce7, #bbf7d0); }
+        .tarefa-item.pagamento { background: linear-gradient(to right, #fef2f2, #fecdd3); border-color: #ef4444; }
+        .tarefa-item.pagamento:hover { background: linear-gradient(to right, #fee2e2, #fecaca); }
+        .tarefa-item.concluido { opacity: 0.6; }
+        .tarefa-item.hoje { box-shadow: 0 0 0 2px #a5b4fc; }
+        .tarefa-content { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+        .tarefa-data { display: flex; align-items: center; gap: 0.75rem; min-width: 140px; }
+        .tarefa-dia { font-size: 1.125rem; font-weight: 700; }
+        .tarefa-item.recebimento .tarefa-dia { color: #15803d; }
+        .tarefa-item.pagamento .tarefa-dia { color: #991b1b; }
+        .tarefa-dia-semana { display: flex; flex-direction: column; }
+        .dia-semana-text { font-size: 0.75rem; color: #64748b; }
+        .badge-dia-util { font-size: 0.625rem; background: #dbeafe; color: #1e40af; padding: 0.125rem 0.375rem; border-radius: 9999px; font-weight: 500; margin-top: 0.125rem; }
+        .tarefa-info { flex: 1; min-width: 0; }
+        .tarefa-cliente { font-weight: 600; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tarefa-descricao { font-size: 0.875rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tarefa-badges { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+        .badge { padding: 0.25rem 0.5rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 500; display: flex; align-items: center; gap: 0.25rem; }
+        .badge-recorrente { background: rgba(255, 255, 255, 0.7); color: #475569; }
+        .badge-valor { font-weight: 600; font-size: 0.875rem; padding: 0.25rem 0.75rem; }
+        .tarefa-item.recebimento .badge-valor { background: #86efac; color: #166534; }
+        .tarefa-item.pagamento .badge-valor { background: #fca5a5; color: #7f1d1d; }
+        .badge-status { padding: 0.25rem 0.625rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 500; }
+        .badge-status.pendente { background: #e2e8f0; color: #475569; }
+        .badge-status.em_andamento { background: #fef3c7; color: #92400e; }
+        .badge-status.concluido { background: #86efac; color: #166534; }
+        .dia-vazio { padding: 0.75rem; border-radius: 0.5rem; border-left: 4px solid #cbd5e1; background: #f8fafc; transition: all 0.2s; }
+        .dia-vazio:hover { background: #f1f5f9; }
+        .dia-vazio.hoje { background: linear-gradient(to right, #eef2ff, #dbeafe); border-color: #6366f1; }
+        .dia-vazio-content { display: flex; align-items: center; justify-content: space-between; }
+        .dia-vazio-info { display: flex; align-items: center; gap: 0.75rem; }
+        .dia-vazio .tarefa-dia { color: #64748b; }
+        .dia-vazio.hoje .tarefa-dia { color: #4f46e5; }
+        .btn-add { background: transparent; border: none; cursor: pointer; padding: 0.375rem; border-radius: 0.5rem; color: #4f46e5; transition: all 0.2s; }
+        .btn-add:hover { background: #eef2ff; }
+        .mensagem-vazia { text-align: center; padding: 3rem 0; }
+        .mensagem-vazia-text { color: #64748b; font-size: 1.125rem; margin-top: 1rem; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); z-index: 50; align-items: center; justify-content: center; padding: 1rem; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 1rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); max-width: 42rem; width: 100%; max-height: 90vh; overflow-y: auto; }
+        .modal-header { padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-size: 1.5rem; font-weight: 700; color: #1e293b; }
+        .btn-close { background: transparent; border: none; cursor: pointer; padding: 0.5rem; border-radius: 0.5rem; transition: all 0.2s; }
+        .btn-close:hover { background: #f1f5f9; }
+        .modal-body { padding: 1.5rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-label { display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem; }
+        .form-input, .form-select, .form-textarea { width: 100%; padding: 0.625rem 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.875rem; transition: all 0.2s; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+        .form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .modal-footer { padding: 1.5rem; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .btn-danger { background: #ef4444; color: white; padding: 0.625rem 1.25rem; border-radius: 0.75rem; border: none; cursor: pointer; font-weight: 500; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-danger:hover { background: #dc2626; }
+        .modal-footer-buttons { display: flex; gap: 0.75rem; margin-left: auto; }
         @media (max-width: 768px) {
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            .tarefa-content {
-                flex-wrap: wrap;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
+            h1 { font-size: 1.5rem; }
+            .tarefa-content { flex-wrap: wrap; }
+            .form-row { grid-template-columns: 1fr; }
+            .chart-container { height: 250px; }
+            .chart-container.tall { height: 300px; }
+            .dashboard-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <div class="header">
             <div class="header-top">
                 <div class="header-title">
@@ -670,8 +170,6 @@
                     </button>
                 </div>
             </div>
-
-            <!-- Resumo Financeiro -->
             <div class="resumo-financeiro">
                 <div class="card-resumo recebimento">
                     <div class="card-resumo-content">
@@ -685,7 +183,6 @@
                         </svg>
                     </div>
                 </div>
-
                 <div class="card-resumo pagamento">
                     <div class="card-resumo-content">
                         <div>
@@ -698,7 +195,6 @@
                         </svg>
                     </div>
                 </div>
-
                 <div class="card-resumo saldo" id="card-saldo">
                     <div class="card-resumo-content">
                         <div>
@@ -714,40 +210,131 @@
                 </div>
             </div>
         </div>
-
-        <!-- Filtros -->
-        <div class="filtros">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
-                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-            </svg>
-            <span class="filtro-label">Filtrar por:</span>
-            <button class="btn-filtro active" onclick="setFiltro('todos')">Todos</button>
-            <button class="btn-filtro" onclick="setFiltro('recebimento')">Recebimentos</button>
-            <button class="btn-filtro" onclick="setFiltro('pagamento')">Pagamentos</button>
-        </div>
-
-        <!-- Navegação do Calendário -->
-        <div class="navegacao-calendario">
-            <button class="nav-btn" onclick="mesAnterior()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2">
-                    <polyline points="15 18 9 12 15 6"></polyline>
+        <div class="tabs">
+            <button class="tab-btn" onclick="trocarTab('dashboard')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
                 </svg>
+                Dashboard
             </button>
-            <div class="mes-ano" id="mes-ano"></div>
-            <button class="nav-btn" onclick="proximoMes()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2">
-                    <polyline points="9 18 15 12 9 6"></polyline>
+            <button class="tab-btn active" onclick="trocarTab('calendario')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
                 </svg>
+                Calendário
             </button>
         </div>
-
-        <!-- Calendário -->
-        <div class="calendario">
-            <div class="tarefas-lista" id="tarefas-lista"></div>
+        <div id="tab-dashboard" class="tab-content">
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <div class="stat-label">Total de Tarefas</div>
+                    <div class="stat-value" id="stat-total-tarefas">0</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-label">Concluídas</div>
+                    <div class="stat-value" id="stat-concluidas">0</div>
+                </div>
+                <div class="stat-card red">
+                    <div class="stat-label">Pendentes</div>
+                    <div class="stat-value" id="stat-pendentes">0</div>
+                </div>
+                <div class="stat-card purple">
+                    <div class="stat-label">Em Andamento</div>
+                    <div class="stat-value" id="stat-andamento">0</div>
+                </div>
+            </div>
+            <div class="dashboard-grid">
+                <div class="card-chart" style="grid-column: 1 / -1;">
+                    <div class="card-chart-header">
+                        <div>
+                            <div class="card-chart-title">Receitas vs Despesas</div>
+                            <div class="card-chart-subtitle">Comparativo do mês atual</div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="chartReceitasDespesas"></canvas>
+                    </div>
+                </div>
+                <div class="card-chart">
+                    <div class="card-chart-header">
+                        <div>
+                            <div class="card-chart-title">Status das Tarefas</div>
+                            <div class="card-chart-subtitle">Distribuição por status</div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="chartStatus"></canvas>
+                    </div>
+                </div>
+                <div class="card-chart">
+                    <div class="card-chart-header">
+                        <div>
+                            <div class="card-chart-title">Tipos de Tarefa</div>
+                            <div class="card-chart-subtitle">Recorrentes vs Eventuais</div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="chartTipos"></canvas>
+                    </div>
+                </div>
+                <div class="card-chart" style="grid-column: 1 / -1;">
+                    <div class="card-chart-header">
+                        <div>
+                            <div class="card-chart-title">Top 10 Maiores Pagamentos</div>
+                            <div class="card-chart-subtitle">Despesas mais relevantes do mês</div>
+                        </div>
+                    </div>
+                    <div class="chart-container tall">
+                        <canvas id="chartTopPagamentos"></canvas>
+                    </div>
+                </div>
+                <div class="card-chart" style="grid-column: 1 / -1;">
+                    <div class="card-chart-header">
+                        <div>
+                            <div class="card-chart-title">Fluxo de Caixa Diário</div>
+                            <div class="card-chart-subtitle">Entradas e saídas ao longo do mês</div>
+                        </div>
+                    </div>
+                    <div class="chart-container tall">
+                        <canvas id="chartFluxoCaixa"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="tab-calendario" class="tab-content active">
+            <div class="filtros">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
+                <span class="filtro-label">Filtrar por:</span>
+                <button class="btn-filtro active" onclick="setFiltro('todos')">Todos</button>
+                <button class="btn-filtro" onclick="setFiltro('recebimento')">Recebimentos</button>
+                <button class="btn-filtro" onclick="setFiltro('pagamento')">Pagamentos</button>
+            </div>
+            <div class="navegacao-calendario">
+                <button class="nav-btn" onclick="mesAnterior()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+                <div class="mes-ano" id="mes-ano"></div>
+                <button class="nav-btn" onclick="proximoMes()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+            <div class="calendario">
+                <div class="tarefas-lista" id="tarefas-lista"></div>
+            </div>
         </div>
     </div>
-
-    <!-- Modal -->
     <div class="modal" id="modal-tarefa">
         <div class="modal-content">
             <div class="modal-header">
@@ -759,23 +346,19 @@
                     </svg>
                 </button>
             </div>
-
             <div class="modal-body">
                 <div class="form-group">
                     <label class="form-label">Data</label>
                     <input type="date" class="form-input" id="input-data">
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Cliente/Fornecedor</label>
                     <input type="text" class="form-input" id="input-cliente" placeholder="Nome do cliente ou fornecedor">
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Descrição</label>
                     <textarea class="form-textarea" id="input-descricao" rows="3" placeholder="Descreva o procedimento..."></textarea>
                 </div>
-
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Tipo</label>
@@ -785,7 +368,6 @@
                             <option value="outro">Outro</option>
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label class="form-label">Categoria</label>
                         <select class="form-select" id="input-categoria">
@@ -794,13 +376,11 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Valor (R$)</label>
                         <input type="number" step="0.01" class="form-input" id="input-valor" placeholder="0.00">
                     </div>
-
                     <div class="form-group">
                         <label class="form-label">Status</label>
                         <select class="form-select" id="input-status">
@@ -811,7 +391,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="modal-footer">
                 <button class="btn-danger" id="btn-excluir" onclick="excluirTarefa()" style="display: none;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -820,7 +399,6 @@
                     </svg>
                     Excluir
                 </button>
-
                 <div class="modal-footer-buttons">
                     <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
                     <button class="btn btn-primary" onclick="salvarTarefa()">Salvar</button>
@@ -828,409 +406,174 @@
             </div>
         </div>
     </div>
-
     <script>
-        const mesesPT = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
-                         'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        const mesesPT = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
         const diasSemanaPT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-
         let mesAtual = new Date().getMonth();
         let anoAtual = new Date().getFullYear();
         let tarefas = [];
         let filtroTipo = 'todos';
         let tarefaSelecionada = null;
+        let tabAtual = 'calendario';
+        let chartReceitasDespesas, chartStatus, chartTipos, chartTopPagamentos, chartFluxoCaixa;
 
-        // Dados iniciais
         function inicializarDados() {
-            // Tentar carregar dados do localStorage
             const dadosSalvos = localStorage.getItem('sistemaDAFTarefas');
-            
             if (dadosSalvos) {
-                // Se existem dados salvos, usar eles
                 tarefas = JSON.parse(dadosSalvos);
             } else {
-                // Se não existem dados salvos, usar dados iniciais
                 tarefas = [
-                    // Janeiro 2026 - Recorrentes
-                    { id: 1, data: '2026-01-02', cliente: 'VINCI ENERGIES DO BRASIL', descricao: 'Emitir NFS-e e enviar por e-mail', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
-                    { id: 2, data: '2026-01-02', cliente: 'EDF', descricao: 'BPO: preparar BM e enviar à gerência Movisafe', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
-                    { id: 3, data: '2026-01-02', cliente: 'SAFRAN ELETRONICS & DEFENSE', descricao: 'Emitir NFS-e e enviar por e-mail', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
-                    { id: 4, data: '2026-01-02', cliente: 'LABORATORIOS SERVIER', descricao: 'Emitir NFS-e e enviar por e-mail', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
-                    { id: 5, data: '2026-01-02', cliente: 'THALES INTERNATIONAL', descricao: 'Emitir NFS-e e enviar por e-mail', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
-                    { id: 6, data: '2026-01-02', cliente: 'SBM OFFSHORE', descricao: 'BPO: preparar BM (Portal SBM) e aguardar aprovação', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
-                    { id: 7, data: '2026-01-02', cliente: 'SUBSEA7', descricao: 'Emitir NFS-e e enviar por e-mail', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
-                    { id: 8, data: '2026-01-02', cliente: 'MBDA', descricao: 'Emitir NFS-e e enviar por e-mail', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
-                    { id: 9, data: '2026-01-02', cliente: 'MOËT HENNESSY', descricao: 'Preparar Invoice para enviar ao comprador (França)', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
-                    { id: 10, data: '2026-01-02', cliente: 'HELEXIA', descricao: 'Solicitar relação de filiais e valores à gerência', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
-                    { id: 11, data: '2026-01-02', cliente: 'INTERLIRA', descricao: 'Emitir NFS-e e enviar por e-mail', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
-                    { id: 12, data: '2026-01-02', cliente: 'LOCKEYBOX', descricao: 'Emitir NFS-e e enviar por e-mail', tipo: 'recorrente', categoria: 'recebimento', status: 'pendente' },
-                    
-                    // Follow-ups
-                    { id: 13, data: '2026-01-05', cliente: 'EDF', descricao: 'Enviar BM revisado ao comprador (após devolutiva)', tipo: 'eventual', categoria: 'recebimento', status: 'pendente' },
-                    { id: 14, data: '2026-01-06', cliente: 'SBM OFFSHORE', descricao: 'Verificar aprovação BM; se sem devolutiva, solicitar', tipo: 'eventual', categoria: 'recebimento', status: 'pendente' },
-                    { id: 15, data: '2026-01-07', cliente: 'HELEXIA', descricao: 'Preparar espelhos para aprovação', tipo: 'eventual', categoria: 'recebimento', status: 'pendente' },
-                    { id: 16, data: '2026-01-08', cliente: 'EDF', descricao: 'Emitir NFS-e citando número do BM', tipo: 'eventual', categoria: 'recebimento', status: 'pendente' },
-                    { id: 17, data: '2026-01-08', cliente: 'SBM OFFSHORE', descricao: 'Emitir NFS-e citando PO e BM; anexar documentos', tipo: 'eventual', categoria: 'recebimento', status: 'pendente' },
-                    { id: 18, data: '2026-01-08', cliente: 'HELEXIA', descricao: 'Enviar espelhos ao e-mail da Lívia', tipo: 'eventual', categoria: 'recebimento', status: 'pendente' },
-                    { id: 19, data: '2026-01-16', cliente: 'HELEXIA', descricao: 'Emitir NFS-e (com números dos POs)', tipo: 'eventual', categoria: 'recebimento', status: 'pendente' },
-
-                    // Pagamentos dia 5
-                    { id: 20, data: '2026-01-05', cliente: 'LIGHT', descricao: 'REF. DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1349.70 },
-                    { id: 21, data: '2026-01-05', cliente: 'FA SOLUÇÕES FINANCEIRAS', descricao: 'BPO FINANCEIRO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1800.00 },
-                    { id: 22, data: '2026-01-05', cliente: 'OFFICIUM CONTABILIDADE', descricao: 'HONORÁRIOS CONTÁBEIS', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 3800.00 },
-                    { id: 23, data: '2026-01-05', cliente: 'NORT ASSESSORIA', descricao: 'AUXÍLIO FINANCEIRO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 4500.00 },
-                    { id: 24, data: '2026-01-05', cliente: 'SILVA CONSULTORIA IMOBILIÁRIA', descricao: 'ALUGUEL E CONDOMÍNIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 3432.42 },
-                    { id: 25, data: '2026-01-05', cliente: 'CARLOS FERNANDO FERREIRA', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 3961.33 },
-                    { id: 26, data: '2026-01-05', cliente: 'ROMÁRIO PERES FARIAS', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 5000.00 },
-                    { id: 27, data: '2026-01-05', cliente: 'PASCAL JACQUES', descricao: 'PRÓ-LABORE', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1780.00 },
-                    { id: 28, data: '2026-01-05', cliente: 'ANDRÉ NODEID', descricao: 'SERVIÇOS PRESTADOS', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1575.00 },
-                    { id: 29, data: '2026-01-05', cliente: 'JULIO LUGATO', descricao: 'SERVIÇOS PRESTADOS', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 14000.00 },
-                    { id: 30, data: '2026-01-05', cliente: 'ANDRE SILVA', descricao: 'SERVIÇOS PRESTADOS', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 14000.00 },
-                    { id: 31, data: '2026-01-05', cliente: 'LUISA MARIA (DIARISTA)', descricao: 'SERVIÇOS PRESTADOS', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1440.00 },
-                    { id: 32, data: '2026-01-05', cliente: 'ASSIM SAÚDE', descricao: 'REF. NOVEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1784.99 },
-                    { id: 33, data: '2026-01-05', cliente: 'INSTITUTO REAP RIO', descricao: 'REF NOVEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1000.00 },
-                    { id: 34, data: '2026-01-05', cliente: 'BIANCA SANTIAGO', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1945.51 },
-                    { id: 35, data: '2026-01-05', cliente: 'HENRIQUE LIMA', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 15248.84 },
-                    { id: 36, data: '2026-01-05', cliente: 'JESSICA RODRIGUES', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1887.39 },
-                    { id: 37, data: '2026-01-05', cliente: 'JOSNIEL RODRIGUES', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1667.21 },
-                    { id: 38, data: '2026-01-05', cliente: 'LAIS DA SILVA', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1926.14 },
-                    { id: 39, data: '2026-01-05', cliente: 'LETICIA PINHEIRO', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1635.49 },
-                    { id: 40, data: '2026-01-05', cliente: 'LOAN HEITOR', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 2291.41 },
-                    { id: 41, data: '2026-01-05', cliente: 'LUIS CARLOS BUTTER', descricao: 'SALÁRIO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 2124.15 },
-                    { id: 42, data: '2026-01-05', cliente: 'IBB TI', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 600.00 },
-
-                    // Pagamentos dia 12
-                    { id: 43, data: '2026-01-12', cliente: 'TELLE CAL', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 149.00 },
-                    { id: 44, data: '2026-01-12', cliente: 'AUTREMENT DIT RIO', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 504.00 },
-                    { id: 45, data: '2026-01-12', cliente: 'SISTEMA NIBO', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 160.00 },
-
-                    // Pagamentos dia 15
-                    { id: 46, data: '2026-01-15', cliente: 'ANNE CATHERINE', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1620.00 },
-                    { id: 47, data: '2026-01-15', cliente: 'REIS & NERY', descricao: 'HONORÁRIOS ADVOCATÍCIOS 11/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1000.00 },
-                    { id: 48, data: '2026-01-15', cliente: 'OFFICIUM CONTABILIDADE', descricao: 'SEGUNDA PARCELA DO ADICIONAL DE 2025', tipo: 'eventual', categoria: 'pagamento', status: 'pendente', valor: 791.67 },
-                    { id: 49, data: '2026-01-15', cliente: 'TARGETHOST', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 149.90 },
-
-                    // Pagamentos dia 19
-                    { id: 50, data: '2026-01-19', cliente: 'SIMPLES NACIONAL SMART CICC', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1723.55 },
-                    { id: 51, data: '2026-01-19', cliente: 'FGTS MOVISAFE', descricao: 'REF DEZEMBRO/2025 PROVISÃO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 873.29 },
-                    { id: 52, data: '2026-01-19', cliente: 'FGTS SMART CICC', descricao: 'REF DEZEMBRO/2025 PROVISÃO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 2936.99 },
-                    { id: 53, data: '2026-01-19', cliente: 'INSS MOVISAFE', descricao: 'REF DEZEMBRO/2025 PROVISÃO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 10382.92 },
-                    { id: 54, data: '2026-01-19', cliente: 'INSS SMART CICC', descricao: 'REF DEZEMBRO/2025 PROVISÃO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 2397.24 },
-                    { id: 55, data: '2026-01-19', cliente: 'SISTEMA OMIE', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 282.00 },
-
-                    // Pagamentos dia 20
-                    { id: 56, data: '2026-01-20', cliente: 'VIVO EMPRESA', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 153.09 },
-
-                    // Pagamentos dia 23
-                    { id: 57, data: '2026-01-23', cliente: 'NET2PHONE', descricao: 'REF DEZEMBRO/2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 940.76 },
-
-                    // Pagamentos dia 26
-                    { id: 58, data: '2026-01-26', cliente: 'CBD BILHETE (MOVISAFE)', descricao: 'REF VALE TRANSPORTE DE JANEIRO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 761.20 },
-                    { id: 59, data: '2026-01-26', cliente: 'PLUBEE SODEXO', descricao: 'REF DEZEMBRO/2025 VALE REFEIÇÃO', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1827.00 },
-                    { id: 60, data: '2026-01-26', cliente: 'CBD BILHETE (MOVISAFE)', descricao: 'REF VALE TRANSPORTE JANEIRO (PROVISÃO)', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 1485.50 },
-                    { id: 61, data: '2026-01-26', cliente: 'PLUBEE SODEXO', descricao: 'REF DEZEMBRO/2025 VALE REFEIÇÃO (PROVISÃO)', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 3654.00 },
-                    { id: 62, data: '2026-01-26', cliente: 'EUROPART', descricao: 'ACORDO PARCELA 05/24', tipo: 'eventual', categoria: 'pagamento', status: 'pendente', valor: 1992.35 },
-                    { id: 63, data: '2026-01-26', cliente: 'MVX SOLUCOES', descricao: 'MANUTENÇÃO DE SISTEMA PARCELA 6/24', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 448.17 },
-                    { id: 64, data: '2026-01-26', cliente: 'FATURA CLARO', descricao: 'REF. DEZEMBRO (LINHA NOVA)', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 162.69 },
-                    { id: 65, data: '2026-01-26', cliente: 'ULTRA PAPEL', descricao: 'REF DEZEMBRO DE 2025', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 220.00 },
-                    { id: 66, data: '2026-01-26', cliente: 'FATURA CLARO', descricao: 'REF. DEZEMBRO (LINHA NOVA) - 2', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 111.86 },
-
-                    // Pagamentos dia 30
-                    { id: 67, data: '2026-01-30', cliente: 'RECEITA FEDERAL', descricao: 'PARCELAMENTO SIMPLIFICADO 43/60', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 4300.14 },
-                    { id: 68, data: '2026-01-30', cliente: 'RECEITA FEDERAL', descricao: 'PARCELAMENTO SIMPLES NACIONAL 30/60', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 5662.70 },
-                    { id: 69, data: '2026-01-30', cliente: 'RECEITA FEDERAL', descricao: 'PARCELAMENTO SIMPLES NACIONAL PERT 58/145', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 2193.54 },
-                    { id: 70, data: '2026-01-30', cliente: 'PROCURADORIA GERAL INSC 07948916', descricao: 'PARCELAMENTO 31/60', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 2291.95 },
-                    { id: 71, data: '2026-01-30', cliente: 'PROCURADORIA GERAL INSC 13597799', descricao: 'PARCELAMENTO 119/120', tipo: 'recorrente', categoria: 'pagamento', status: 'pendente', valor: 14981.84 },
-                    { id: 72, data: '2026-01-30', cliente: 'PROCURADORIA GERAL INSC 13850074', descricao: 'PARCELAMENTO 120/120', tipo: 'eventual', categoria: 'pagamento', status: 'pendente', valor: 1231.37 }
+{id:1,data:'2026-01-02',cliente:'VINCI ENERGIES DO BRASIL',descricao:'Emitir NFS-e e enviar por e-mail',tipo:'recorrente',categoria:'recebimento',status:'pendente',valor:25000},
+{id:2,data:'2026-01-02',cliente:'EDF',descricao:'BPO: preparar BM e enviar à gerência Movisafe',tipo:'recorrente',categoria:'recebimento',status:'pendente',valor:18500},
+{id:3,data:'2026-01-02',cliente:'SAFRAN ELETRONICS & DEFENSE',descricao:'Emitir NFS-e e enviar por e-mail',tipo:'recorrente',categoria:'recebimento',status:'pendente',valor:32000},
+{id:4,data:'2026-01-02',cliente:'LABORATORIOS SERVIER',descricao:'Emitir NFS-e e enviar por e-mail',tipo:'recorrente',categoria:'recebimento',status:'pendente',valor:15000},
+{id:5,data:'2026-01-02',cliente:'THALES INTERNATIONAL',descricao:'Emitir NFS-e e enviar por e-mail',tipo:'recorrente',categoria:'recebimento',status:'pendente',valor:28000},
+{id:6,data:'2026-01-02',cliente:'SBM OFFSHORE',descricao:'BPO: preparar BM (Portal SBM) e aguardar aprovação',tipo:'recorrente',categoria:'recebimento',status:'pendente',valor:42000},
+{id:7,data:'2026-01-02',cliente:'SUBSEA7',descricao:'Emitir NFS-e e enviar por e-mail',tipo:'recorrente',categoria:'recebimento',status:'pendente',valor:35000},
+{id:8,data:'2026-01-02',cliente:'MBDA',descricao:'Emitir NFS-e e enviar por e-mail',tipo:'recorrente',categoria:'recebimento',status:'pendente',valor:22000},
+{id:9,data:'2026-01-02',cliente:'MOËT HENNESSY',descricao:'Preparar Invoice para enviar ao comprador (França)',tipo:'recorrente',categoria:'recebimento',status:'pendente',valor:38000},
+{id:10,data:'2026-01-02',cliente:'HELEXIA',descricao:'Solicitar relação de filiais e valores à gerência',tipo:'recorrente',categoria:'recebimento',status:'pendente',valor:19500},
+{id:11,data:'2026-01-02',cliente:'INTERLIRA',descricao:'Emitir NFS-e e enviar por e-mail',tipo:'recorrente',categoria:'recebimento',status:'pendente',valor:12000},
+{id:12,data:'2026-01-02',cliente:'LOCKEYBOX',descricao:'Emitir NFS-e e enviar por e-mail',tipo:'recorrente',categoria:'recebimento',status:'pendente',valor:8500},
+{id:13,data:'2026-01-05',cliente:'EDF',descricao:'Enviar BM revisado ao comprador',tipo:'eventual',categoria:'recebimento',status:'pendente'},
+{id:14,data:'2026-01-06',cliente:'SBM OFFSHORE',descricao:'Verificar aprovação BM',tipo:'eventual',categoria:'recebimento',status:'pendente'},
+{id:15,data:'2026-01-07',cliente:'HELEXIA',descricao:'Preparar espelhos para aprovação',tipo:'eventual',categoria:'recebimento',status:'pendente'},
+{id:16,data:'2026-01-08',cliente:'EDF',descricao:'Emitir NFS-e citando número do BM',tipo:'eventual',categoria:'recebimento',status:'pendente',valor:18500},
+{id:17,data:'2026-01-08',cliente:'SBM OFFSHORE',descricao:'Emitir NFS-e citando PO e BM',tipo:'eventual',categoria:'recebimento',status:'pendente',valor:42000},
+{id:18,data:'2026-01-08',cliente:'HELEXIA',descricao:'Enviar espelhos ao e-mail da Lívia',tipo:'eventual',categoria:'recebimento',status:'pendente'},
+{id:19,data:'2026-01-16',cliente:'HELEXIA',descricao:'Emitir NFS-e (com números dos POs)',tipo:'eventual',categoria:'recebimento',status:'pendente',valor:19500},
+{id:20,data:'2026-01-05',cliente:'LIGHT',descricao:'REF. DEZEMBRO/2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:1349.70},
+{id:21,data:'2026-01-05',cliente:'FA SOLUÇÕES FINANCEIRAS',descricao:'BPO FINANCEIRO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:1800.00},
+{id:22,data:'2026-01-05',cliente:'OFFICIUM CONTABILIDADE',descricao:'HONORÁRIOS CONTÁBEIS',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:3800.00},
+{id:23,data:'2026-01-05',cliente:'NORT ASSESSORIA',descricao:'AUXÍLIO FINANCEIRO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:4500.00},
+{id:24,data:'2026-01-05',cliente:'SILVA CONSULTORIA IMOBILIÁRIA',descricao:'ALUGUEL E CONDOMÍNIO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:3432.42},
+{id:25,data:'2026-01-05',cliente:'CARLOS FERNANDO FERREIRA',descricao:'SALÁRIO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:3961.33},
+{id:26,data:'2026-01-05',cliente:'ROMÁRIO PERES FARIAS',descricao:'SALÁRIO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:5000.00},
+{id:27,data:'2026-01-05',cliente:'PASCAL JACQUES',descricao:'PRÓ-LABORE',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:1780.00},
+{id:28,data:'2026-01-05',cliente:'ANDRÉ NODEID',descricao:'SERVIÇOS PRESTADOS',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:1575.00},
+{id:29,data:'2026-01-05',cliente:'JULIO LUGATO',descricao:'SERVIÇOS PRESTADOS',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:14000.00},
+{id:30,data:'2026-01-05',cliente:'ANDRE SILVA',descricao:'SERVIÇOS PRESTADOS',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:14000.00},
+{id:31,data:'2026-01-05',cliente:'LUISA MARIA (DIARISTA)',descricao:'SERVIÇOS PRESTADOS',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:1440.00},
+{id:32,data:'2026-01-05',cliente:'ASSIM SAÚDE',descricao:'REF. NOVEMBRO/2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:1784.99},
+{id:33,data:'2026-01-05',cliente:'INSTITUTO REAP RIO',descricao:'REF NOVEMBRO/2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:1000.00},
+{id:34,data:'2026-01-05',cliente:'BIANCA SANTIAGO',descricao:'SALÁRIO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:1945.51},
+{id:35,data:'2026-01-05',cliente:'HENRIQUE LIMA',descricao:'SALÁRIO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:15248.84},
+{id:36,data:'2026-01-05',cliente:'JESSICA RODRIGUES',descricao:'SALÁRIO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:1887.39},
+{id:37,data:'2026-01-05',cliente:'JOSNIEL RODRIGUES',descricao:'SALÁRIO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:1667.21},
+{id:38,data:'2026-01-05',cliente:'LAIS DA SILVA',descricao:'SALÁRIO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:1926.14},
+{id:39,data:'2026-01-05',cliente:'LETICIA PINHEIRO',descricao:'SALÁRIO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:1635.49},
+{id:40,data:'2026-01-05',cliente:'LOAN HEITOR',descricao:'SALÁRIO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:2291.41},
+{id:41,data:'2026-01-05',cliente:'LUIS CARLOS BUTTER',descricao:'SALÁRIO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:2124.15},
+{id:42,data:'2026-01-05',cliente:'IBB TI',descricao:'REF DEZEMBRO/2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:600.00},
+{id:43,data:'2026-01-12',cliente:'TELLE CAL',descricao:'REF DEZEMBRO/2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:149.00},
+{id:44,data:'2026-01-12',cliente:'AUTREMENT DIT RIO',descricao:'REF DEZEMBRO/2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:504.00},
+{id:45,data:'2026-01-12',cliente:'SISTEMA NIBO',descricao:'REF DEZEMBRO/2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:160.00},
+{id:46,data:'2026-01-15',cliente:'ANNE CATHERINE',descricao:'REF DEZEMBRO/2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:1620.00},
+{id:47,data:'2026-01-15',cliente:'REIS & NERY',descricao:'HONORÁRIOS ADVOCATÍCIOS',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:1000.00},
+{id:48,data:'2026-01-15',cliente:'OFFICIUM CONTABILIDADE',descricao:'SEGUNDA PARCELA ADICIONAL',tipo:'eventual',categoria:'pagamento',status:'pendente',valor:791.67},
+{id:49,data:'2026-01-15',cliente:'TARGETHOST',descricao:'REF DEZEMBRO/2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:149.90},
+{id:50,data:'2026-01-19',cliente:'SIMPLES NACIONAL SMART CICC',descricao:'REF DEZEMBRO/2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:1723.55},
+{id:51,data:'2026-01-19',cliente:'FGTS MOVISAFE',descricao:'REF DEZEMBRO/2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:873.29},
+{id:52,data:'2026-01-19',cliente:'FGTS SMART CICC',descricao:'REF DEZEMBRO/2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:2936.99},
+{id:53,data:'2026-01-19',cliente:'INSS MOVISAFE',descricao:'REF DEZEMBRO/2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:10382.92},
+{id:54,data:'2026-01-19',cliente:'INSS SMART CICC',descricao:'REF DEZEMBRO/2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:2397.24},
+{id:55,data:'2026-01-19',cliente:'SISTEMA OMIE',descricao:'REF DEZEMBRO/2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:282.00},
+{id:56,data:'2026-01-20',cliente:'VIVO EMPRESA',descricao:'REF DEZEMBRO/2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:153.09},
+{id:57,data:'2026-01-23',cliente:'NET2PHONE',descricao:'REF DEZEMBRO/2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:940.76},
+{id:58,data:'2026-01-26',cliente:'CBD BILHETE (MOVISAFE)',descricao:'VALE TRANSPORTE JANEIRO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:761.20},
+{id:59,data:'2026-01-26',cliente:'PLUBEE SODEXO',descricao:'VALE REFEIÇÃO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:1827.00},
+{id:60,data:'2026-01-26',cliente:'CBD BILHETE',descricao:'PROVISÃO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:1485.50},
+{id:61,data:'2026-01-26',cliente:'PLUBEE SODEXO',descricao:'PROVISÃO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:3654.00},
+{id:62,data:'2026-01-26',cliente:'EUROPART',descricao:'ACORDO PARCELA 05/24',tipo:'eventual',categoria:'pagamento',status:'pendente',valor:1992.35},
+{id:63,data:'2026-01-26',cliente:'MVX SOLUCOES',descricao:'MANUTENÇÃO SISTEMA',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:448.17},
+{id:64,data:'2026-01-26',cliente:'FATURA CLARO',descricao:'REF. DEZEMBRO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:162.69},
+{id:65,data:'2026-01-26',cliente:'ULTRA PAPEL',descricao:'REF DEZEMBRO 2025',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:220.00},
+{id:66,data:'2026-01-26',cliente:'FATURA CLARO 2',descricao:'REF. DEZEMBRO',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:111.86},
+{id:67,data:'2026-01-30',cliente:'RECEITA FEDERAL',descricao:'PARCELAMENTO 43/60',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:4300.14},
+{id:68,data:'2026-01-30',cliente:'RECEITA FEDERAL',descricao:'SIMPLES NACIONAL 30/60',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:5662.70},
+{id:69,data:'2026-01-30',cliente:'RECEITA FEDERAL',descricao:'PERT 58/145',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:2193.54},
+{id:70,data:'2026-01-30',cliente:'PROCURADORIA GERAL',descricao:'PARC 31/60',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:2291.95},
+{id:71,data:'2026-01-30',cliente:'PROCURADORIA GERAL',descricao:'PARC 119/120',tipo:'recorrente',categoria:'pagamento',status:'pendente',valor:14981.84},
+{id:72,data:'2026-01-30',cliente:'PROCURADORIA GERAL',descricao:'PARC 120/120',tipo:'eventual',categoria:'pagamento',status:'pendente',valor:1231.37}
                 ];
-                
-                // Salvar dados iniciais no localStorage
                 salvarDados();
             }
-            
             renderizar();
+            inicializarCharts();
         }
 
-        // Função para salvar dados no localStorage
-        function salvarDados() {
-            localStorage.setItem('sistemaDAFTarefas', JSON.stringify(tarefas));
-        }
-
-        // Função para limpar dados e reiniciar
-        function limparDados() {
-            if (confirm('⚠️ ATENÇÃO! Esta ação irá apagar todos os dados salvos e restaurar o sistema ao estado inicial. Deseja continuar?')) {
-                localStorage.removeItem('sistemaDAFTarefas');
-                location.reload(); // Recarregar a página para reiniciar com dados iniciais
-            }
-        }
-
-        function renderizar() {
-            atualizarMesAno();
-            renderizarCalendario();
-            calcularTotais();
-        }
-
-        function atualizarMesAno() {
-            document.getElementById('mes-ano').textContent = `${mesesPT[mesAtual]} ${anoAtual}`;
-        }
-
-        function obterDiasDoMes() {
-            const ultimoDia = new Date(anoAtual, mesAtual + 1, 0).getDate();
-            const dias = [];
-            for (let dia = 1; dia <= ultimoDia; dia++) {
-                dias.push(dia);
-            }
-            return dias;
-        }
-
+        function salvarDados() { localStorage.setItem('sistemaDAFTarefas', JSON.stringify(tarefas)); }
+        function limparDados() { if (confirm('⚠️ ATENÇÃO! Esta ação irá apagar todos os dados. Deseja continuar?')) { localStorage.removeItem('sistemaDAFTarefas'); location.reload(); } }
+        function trocarTab(tab) { tabAtual = tab; document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); event.target.closest('.tab-btn').classList.add('active'); document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active')); document.getElementById('tab-'+tab).classList.add('active'); if (tab === 'dashboard') atualizarDashboard(); }
+        function renderizar() { atualizarMesAno(); renderizarCalendario(); calcularTotais(); if (tabAtual === 'dashboard') atualizarDashboard(); }
+        function atualizarMesAno() { document.getElementById('mes-ano').textContent = mesesPT[mesAtual]+' '+anoAtual; }
+        function obterDiasDoMes() { const d = new Date(anoAtual, mesAtual + 1, 0).getDate(); return Array.from({length: d}, (_, i) => i + 1); }
         function obterTarefasDoDia(dia) {
             const dataStr = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
             const tarefasDoDia = [];
-            
-            // Adicionar tarefas diretas do dia (tarefas específicas já cadastradas para este mês)
             tarefas.filter(t => t.data === dataStr).forEach(t => tarefasDoDia.push(t));
-            
-            // Adicionar tarefas recorrentes de QUALQUER mês
             tarefas.filter(t => t.tipo === 'recorrente').forEach(tarefa => {
-                const [anoOriginal, mesOriginal, diaOriginal] = tarefa.data.split('-').map(Number);
-                
-                // Se o dia corresponde ao dia da tarefa recorrente
-                if (parseInt(diaOriginal) === dia) {
-                    // Verificar se não é o mês original (pois já foi adicionado acima)
-                    const ehMesOriginal = (anoAtual === anoOriginal && mesAtual + 1 === mesOriginal);
-                    
-                    if (!ehMesOriginal) {
-                        // Verificar se não existe já uma tarefa cadastrada para este dia/mês com mesmo cliente e descrição
-                        const jaExiste = tarefasDoDia.some(t => 
-                            t.cliente === tarefa.cliente && 
-                            t.descricao === tarefa.descricao
-                        );
-                        
-                        if (!jaExiste) {
-                            // Criar uma cópia da tarefa para o mês atual
-                            const tarefaRecorrente = {
-                                ...tarefa,
-                                id: `recorrente-${tarefa.id}-${anoAtual}-${mesAtual}-${dia}`,
-                                data: dataStr,
-                                geradaAutomaticamente: true
-                            };
-                            tarefasDoDia.push(tarefaRecorrente);
-                        }
+                const [anoOrig, mesOrig, diaOrig] = tarefa.data.split('-').map(Number);
+                if (parseInt(diaOrig) === dia && !(anoAtual === anoOrig && mesAtual + 1 === mesOrig)) {
+                    if (!tarefasDoDia.some(t => t.cliente === tarefa.cliente && t.descricao === tarefa.descricao)) {
+                        tarefasDoDia.push({...tarefa, id: `rec-${tarefa.id}-${anoAtual}-${mesAtual}-${dia}`, data: dataStr, geradaAutomaticamente: true});
                     }
                 }
             });
-            
             return tarefasDoDia;
         }
-
-        function ehHoje(dia) {
-            const hoje = new Date();
-            return dia === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear();
-        }
-
+        function ehHoje(dia) { const hoje = new Date(); return dia === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear(); }
         function ehPrimeiroDiaUtil(dia) {
-            const data = new Date(anoAtual, mesAtual, dia);
-            const diaSemana = data.getDay();
-            return dia === 1 || (dia <= 7 && diaSemana >= 1 && diaSemana <= 5);
+            // Encontrar o primeiro dia útil real do mês
+            for (let d = 1; d <= dia; d++) {
+                const data = new Date(anoAtual, mesAtual, d);
+                const diaSemana = data.getDay();
+                // Se é dia útil (segunda a sexta)
+                if (diaSemana >= 1 && diaSemana <= 5) {
+                    return d === dia; // Retorna true apenas se este dia for o primeiro dia útil
+                }
+            }
+            return false;
         }
-
         function renderizarCalendario() {
             const lista = document.getElementById('tarefas-lista');
             lista.innerHTML = '';
-            
             const dias = obterDiasDoMes();
             let temTarefas = false;
-
             dias.forEach(dia => {
                 const tarefasDoDia = obterTarefasDoDia(dia);
-                const tarefasFiltradas = filtroTipo === 'todos' 
-                    ? tarefasDoDia 
-                    : tarefasDoDia.filter(t => t.categoria === filtroTipo);
-
+                const tarefasFiltradas = filtroTipo === 'todos' ? tarefasDoDia : tarefasDoDia.filter(t => t.categoria === filtroTipo);
                 const dataCompleta = new Date(anoAtual, mesAtual, dia);
                 const diaSemana = diasSemanaPT[dataCompleta.getDay()];
                 const primeiroDiaUtil = ehPrimeiroDiaUtil(dia);
-
                 if (tarefasFiltradas.length === 0) {
-                    const diaDiv = document.createElement('div');
-                    diaDiv.className = `dia-vazio ${ehHoje(dia) ? 'hoje' : ''}`;
-                    diaDiv.innerHTML = `
-                        <div class="dia-vazio-content">
-                            <div class="dia-vazio-info">
-                                <span class="tarefa-dia">${String(dia).padStart(2, '0')}</span>
-                                <div class="tarefa-dia-semana">
-                                    <span class="dia-semana-text">${diaSemana}</span>
-                                    ${primeiroDiaUtil ? '<span class="badge-dia-util">1º Dia Útil</span>' : ''}
-                                </div>
-                            </div>
-                            <button class="btn-add" onclick="abrirModalNovaTarefa(${dia})">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                </svg>
-                            </button>
-                        </div>
-                    `;
-                    lista.appendChild(diaDiv);
+                    lista.innerHTML += `<div class="dia-vazio ${ehHoje(dia)?'hoje':''}"><div class="dia-vazio-content"><div class="dia-vazio-info"><span class="tarefa-dia">${String(dia).padStart(2,'0')}</span><div class="tarefa-dia-semana"><span class="dia-semana-text">${diaSemana}</span>${primeiroDiaUtil?'<span class="badge-dia-util">1º Dia Útil</span>':''}</div></div><button class="btn-add" onclick="abrirModalNovaTarefa(${dia})"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button></div></div>`;
                 } else {
                     temTarefas = true;
-                    tarefasFiltradas.forEach((tarefa, index) => {
-                        const tarefaDiv = document.createElement('div');
-                        tarefaDiv.className = `tarefa-item ${tarefa.categoria} ${tarefa.status === 'concluido' ? 'concluido' : ''} ${ehHoje(dia) ? 'hoje' : ''}`;
-                        tarefaDiv.onclick = () => editarTarefa(tarefa);
-                        
-                        tarefaDiv.innerHTML = `
-                            <div class="tarefa-content">
-                                <div class="tarefa-data">
-                                    <span class="tarefa-dia">${String(dia).padStart(2, '0')}</span>
-                                    <div class="tarefa-dia-semana">
-                                        <span class="dia-semana-text">${diaSemana}</span>
-                                        ${index === 0 && primeiroDiaUtil ? '<span class="badge-dia-util">1º Dia Útil</span>' : ''}
-                                    </div>
-                                </div>
-                                
-                                <div class="tarefa-info">
-                                    <div class="tarefa-cliente">${tarefa.cliente}</div>
-                                    <div class="tarefa-descricao">${tarefa.descricao}</div>
-                                </div>
-                                
-                                <div class="tarefa-badges">
-                                    ${tarefa.tipo === 'recorrente' ? `
-                                        <div class="badge badge-recorrente">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <circle cx="12" cy="12" r="10"></circle>
-                                                <polyline points="12 6 12 12 16 14"></polyline>
-                                            </svg>
-                                            Recorrente
-                                        </div>
-                                    ` : ''}
-                                    
-                                    ${tarefa.geradaAutomaticamente ? `
-                                        <div class="badge badge-recorrente" style="background: rgba(147, 197, 253, 0.5); color: #1e40af;">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <polyline points="23 4 23 10 17 10"></polyline>
-                                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                                            </svg>
-                                            Auto
-                                        </div>
-                                    ` : ''}
-                                    
-                                    ${tarefa.valor ? `
-                                        <div class="badge badge-valor">
-                                            ${parseFloat(tarefa.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                        </div>
-                                    ` : ''}
-                                    
-                                    <div class="badge badge-status ${tarefa.status}">
-                                        ${tarefa.status === 'concluido' ? '✓ Concluído' : 
-                                          tarefa.status === 'em_andamento' ? '⟳ Em Andamento' : '○ Pendente'}
-                                    </div>
-                                    
-                                    <button class="btn-add" onclick="event.stopPropagation(); editarTarefa(${JSON.stringify(tarefa).replace(/"/g, '&quot;')})">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                        
-                        lista.appendChild(tarefaDiv);
+                    tarefasFiltradas.forEach((tarefa, idx) => {
+                        lista.innerHTML += `<div class="tarefa-item ${tarefa.categoria} ${tarefa.status==='concluido'?'concluido':''} ${ehHoje(dia)?'hoje':''}" onclick='editarTarefa(${JSON.stringify(tarefa).replace(/'/g,"\\'")})'><div class="tarefa-content"><div class="tarefa-data"><span class="tarefa-dia">${String(dia).padStart(2,'0')}</span><div class="tarefa-dia-semana"><span class="dia-semana-text">${diaSemana}</span>${idx===0&&primeiroDiaUtil?'<span class="badge-dia-util">1º Dia Útil</span>':''}</div></div><div class="tarefa-info"><div class="tarefa-cliente">${tarefa.cliente}</div><div class="tarefa-descricao">${tarefa.descricao}</div></div><div class="tarefa-badges">${tarefa.tipo==='recorrente'?'<div class="badge badge-recorrente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>Recorrente</div>':''}${tarefa.geradaAutomaticamente?'<div class="badge badge-recorrente" style="background:rgba(147,197,253,0.5);color:#1e40af;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>Auto</div>':''}${tarefa.valor?'<div class="badge badge-valor">'+parseFloat(tarefa.valor).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})+'</div>':''}<div class="badge badge-status ${tarefa.status}">${tarefa.status==='concluido'?'✓ Concluído':tarefa.status==='em_andamento'?'⟳ Em Andamento':'○ Pendente'}</div></div></div></div>`;
                     });
                 }
             });
-
-            if (!temTarefas) {
-                lista.innerHTML = `
-                    <div class="mensagem-vazia">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin: 0 auto;">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        <p class="mensagem-vazia-text">Nenhuma tarefa encontrada para este mês</p>
-                        <button class="btn btn-primary" onclick="abrirModalNovaTarefa()" style="margin-top: 1rem;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                            Adicionar Primeira Tarefa
-                        </button>
-                    </div>
-                `;
-            }
+            if (!temTarefas) lista.innerHTML = '<div class="mensagem-vazia"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="margin:0 auto;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg><p class="mensagem-vazia-text">Nenhuma tarefa encontrada para este mês</p><button class="btn btn-primary" onclick="abrirModalNovaTarefa()" style="margin-top:1rem;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Adicionar Primeira Tarefa</button></div>';
         }
-
         function calcularTotais() {
-            const tarefasMes = tarefas.filter(t => {
-                const [ano, mes] = t.data.split('-').map(Number);
-                return ano === anoAtual && mes === mesAtual + 1;
-            });
-
-            const recebimentos = tarefasMes
-                .filter(t => t.categoria === 'recebimento' && t.valor)
-                .reduce((acc, t) => acc + parseFloat(t.valor || 0), 0);
-
-            const pagamentos = tarefasMes
-                .filter(t => t.categoria === 'pagamento' && t.valor)
-                .reduce((acc, t) => acc + parseFloat(t.valor || 0), 0);
-
-            const saldo = recebimentos - pagamentos;
-
-            document.getElementById('total-recebimentos').textContent = 
-                recebimentos.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            document.getElementById('total-pagamentos').textContent = 
-                pagamentos.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            document.getElementById('total-saldo').textContent = 
-                saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-            const cardSaldo = document.getElementById('card-saldo');
-            if (saldo < 0) {
-                cardSaldo.classList.add('negativo');
-            } else {
-                cardSaldo.classList.remove('negativo');
-            }
+            const tarefasMes = []; const dias = obterDiasDoMes(); dias.forEach(dia => tarefasMes.push(...obterTarefasDoDia(dia)));
+            const rec = tarefasMes.filter(t => t.categoria === 'recebimento' && t.valor).reduce((a, t) => a + parseFloat(t.valor || 0), 0);
+            const pag = tarefasMes.filter(t => t.categoria === 'pagamento' && t.valor).reduce((a, t) => a + parseFloat(t.valor || 0), 0);
+            const saldo = rec - pag;
+            document.getElementById('total-recebimentos').textContent = rec.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+            document.getElementById('total-pagamentos').textContent = pag.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+            document.getElementById('total-saldo').textContent = saldo.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+            const cs = document.getElementById('card-saldo'); saldo < 0 ? cs.classList.add('negativo') : cs.classList.remove('negativo');
         }
-
-        function mesAnterior() {
-            if (mesAtual === 0) {
-                mesAtual = 11;
-                anoAtual--;
-            } else {
-                mesAtual--;
-            }
-            renderizar();
-        }
-
-        function proximoMes() {
-            if (mesAtual === 11) {
-                mesAtual = 0;
-                anoAtual++;
-            } else {
-                mesAtual++;
-            }
-            renderizar();
-        }
-
-        function setFiltro(tipo) {
-            filtroTipo = tipo;
-            
-            document.querySelectorAll('.btn-filtro').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            event.target.classList.add('active');
-            renderizarCalendario();
-        }
-
+        function mesAnterior() { if (mesAtual === 0) { mesAtual = 11; anoAtual--; } else { mesAtual--; } renderizar(); }
+        function proximoMes() { if (mesAtual === 11) { mesAtual = 0; anoAtual++; } else { mesAtual++; } renderizar(); }
+        function setFiltro(tipo) { filtroTipo = tipo; document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('active')); event.target.classList.add('active'); renderizarCalendario(); }
         function abrirModalNovaTarefa(dia = null) {
             tarefaSelecionada = null;
             document.getElementById('modal-titulo').textContent = 'Nova Tarefa';
-            document.getElementById('input-data').value = dia 
-                ? `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`
-                : '';
+            document.getElementById('input-data').value = dia ? `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}` : '';
             document.getElementById('input-cliente').value = '';
             document.getElementById('input-descricao').value = '';
             document.getElementById('input-tipo').value = 'eventual';
@@ -1240,12 +583,8 @@
             document.getElementById('btn-excluir').style.display = 'none';
             document.getElementById('modal-tarefa').classList.add('active');
         }
-
         function editarTarefa(tarefa) {
-            if (typeof tarefa === 'string') {
-                tarefa = JSON.parse(tarefa.replace(/&quot;/g, '"'));
-            }
-            
+            if (typeof tarefa === 'string') tarefa = JSON.parse(tarefa);
             tarefaSelecionada = tarefa;
             document.getElementById('modal-titulo').textContent = 'Editar Tarefa';
             document.getElementById('input-data').value = tarefa.data;
@@ -1258,59 +597,53 @@
             document.getElementById('btn-excluir').style.display = 'inline-flex';
             document.getElementById('modal-tarefa').classList.add('active');
         }
-
-        function fecharModal() {
-            document.getElementById('modal-tarefa').classList.remove('active');
-            tarefaSelecionada = null;
-        }
-
+        function fecharModal() { document.getElementById('modal-tarefa').classList.remove('active'); tarefaSelecionada = null; }
         function salvarTarefa() {
-            const novaTarefa = {
-                id: tarefaSelecionada ? tarefaSelecionada.id : Date.now(),
-                data: document.getElementById('input-data').value,
-                cliente: document.getElementById('input-cliente').value,
-                descricao: document.getElementById('input-descricao').value,
-                tipo: document.getElementById('input-tipo').value,
-                categoria: document.getElementById('input-categoria').value,
-                valor: document.getElementById('input-valor').value ? parseFloat(document.getElementById('input-valor').value) : null,
-                status: document.getElementById('input-status').value
-            };
-
-            if (tarefaSelecionada) {
-                // Se a tarefa foi gerada automaticamente, criar uma nova ao invés de editar
-                if (tarefaSelecionada.geradaAutomaticamente) {
-                    // Remover o ID composto e criar um ID único
-                    novaTarefa.id = Date.now();
-                    tarefas.push(novaTarefa);
-                } else {
-                    const index = tarefas.findIndex(t => t.id === tarefaSelecionada.id);
-                    if (index !== -1) {
-                        tarefas[index] = novaTarefa;
-                    }
-                }
-            } else {
-                tarefas.push(novaTarefa);
-            }
-
-            salvarDados(); // Persistir alterações
-            fecharModal();
-            renderizar();
+            const novaTarefa = { id: tarefaSelecionada ? tarefaSelecionada.id : Date.now(), data: document.getElementById('input-data').value, cliente: document.getElementById('input-cliente').value, descricao: document.getElementById('input-descricao').value, tipo: document.getElementById('input-tipo').value, categoria: document.getElementById('input-categoria').value, valor: document.getElementById('input-valor').value ? parseFloat(document.getElementById('input-valor').value) : null, status: document.getElementById('input-status').value };
+            if (tarefaSelecionada) { if (tarefaSelecionada.geradaAutomaticamente) { novaTarefa.id = Date.now(); tarefas.push(novaTarefa); } else { const idx = tarefas.findIndex(t => t.id === tarefaSelecionada.id); if (idx !== -1) tarefas[idx] = novaTarefa; } } else { tarefas.push(novaTarefa); }
+            salvarDados(); fecharModal(); renderizar();
+        }
+        function excluirTarefa() { if (confirm('Deseja realmente excluir esta tarefa?')) { if (!tarefaSelecionada.geradaAutomaticamente) { tarefas = tarefas.filter(t => t.id !== tarefaSelecionada.id); salvarDados(); } fecharModal(); renderizar(); } }
+        
+        function inicializarCharts() {
+            const ctx1 = document.getElementById('chartReceitasDespesas');
+            const ctx2 = document.getElementById('chartStatus');
+            const ctx3 = document.getElementById('chartTipos');
+            const ctx4 = document.getElementById('chartTopPagamentos');
+            const ctx5 = document.getElementById('chartFluxoCaixa');
+            if (ctx1) chartReceitasDespesas = new Chart(ctx1, { type: 'bar', data: { labels: ['Recebimentos', 'Pagamentos', 'Saldo'], datasets: [{ data: [0, 0, 0], backgroundColor: ['rgba(34,197,94,0.8)', 'rgba(239,68,68,0.8)', 'rgba(59,130,246,0.8)'], borderColor: ['rgb(34,197,94)', 'rgb(239,68,68)', 'rgb(59,130,246)'], borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => 'R$ ' + ctx.parsed.y.toLocaleString('pt-BR', {minimumFractionDigits: 2}) } } }, scales: { y: { beginAtZero: true, ticks: { callback: v => 'R$ ' + v.toLocaleString('pt-BR') } } } } });
+            if (ctx2) chartStatus = new Chart(ctx2, { type: 'doughnut', data: { labels: ['Pendente', 'Em Andamento', 'Concluído'], datasets: [{ data: [0, 0, 0], backgroundColor: ['rgba(226,232,240,0.8)', 'rgba(254,243,199,0.8)', 'rgba(134,239,172,0.8)'], borderColor: ['rgb(148,163,184)', 'rgb(251,191,36)', 'rgb(34,197,94)'], borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
+            if (ctx3) chartTipos = new Chart(ctx3, { type: 'pie', data: { labels: ['Recorrente', 'Eventual', 'Outro'], datasets: [{ data: [0, 0, 0], backgroundColor: ['rgba(139,92,246,0.8)', 'rgba(59,130,246,0.8)', 'rgba(100,116,139,0.8)'], borderColor: ['rgb(139,92,246)', 'rgb(59,130,246)', 'rgb(100,116,139)'], borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
+            if (ctx4) chartTopPagamentos = new Chart(ctx4, { type: 'bar', data: { labels: [], datasets: [{ label: 'Valor', data: [], backgroundColor: 'rgba(239,68,68,0.8)', borderColor: 'rgb(239,68,68)', borderWidth: 2 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => 'R$ ' + ctx.parsed.x.toLocaleString('pt-BR', {minimumFractionDigits: 2}) } } }, scales: { x: { beginAtZero: true, ticks: { callback: v => 'R$ ' + v.toLocaleString('pt-BR') } } } } });
+            if (ctx5) chartFluxoCaixa = new Chart(ctx5, { type: 'line', data: { labels: [], datasets: [{ label: 'Recebimentos', data: [], borderColor: 'rgb(34,197,94)', backgroundColor: 'rgba(34,197,94,0.1)', tension: 0.4, fill: true }, { label: 'Pagamentos', data: [], borderColor: 'rgb(239,68,68)', backgroundColor: 'rgba(239,68,68,0.1)', tension: 0.4, fill: true }] }, options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': R$ ' + ctx.parsed.y.toLocaleString('pt-BR', {minimumFractionDigits: 2}) } } }, scales: { y: { beginAtZero: true, ticks: { callback: v => 'R$ ' + v.toLocaleString('pt-BR') } } } } });
+        }
+        
+        function atualizarDashboard() {
+            const tarefasMes = []; const dias = obterDiasDoMes(); dias.forEach(dia => tarefasMes.push(...obterTarefasDoDia(dia)));
+            const totalTar = tarefasMes.length;
+            const concl = tarefasMes.filter(t => t.status === 'concluido').length;
+            const pend = tarefasMes.filter(t => t.status === 'pendente').length;
+            const andam = tarefasMes.filter(t => t.status === 'em_andamento').length;
+            document.getElementById('stat-total-tarefas').textContent = totalTar;
+            document.getElementById('stat-concluidas').textContent = concl;
+            document.getElementById('stat-pendentes').textContent = pend;
+            document.getElementById('stat-andamento').textContent = andam;
+            const rec = tarefasMes.filter(t => t.categoria === 'recebimento' && t.valor).reduce((a, t) => a + parseFloat(t.valor || 0), 0);
+            const pag = tarefasMes.filter(t => t.categoria === 'pagamento' && t.valor).reduce((a, t) => a + parseFloat(t.valor || 0), 0);
+            const saldo = rec - pag;
+            if (chartReceitasDespesas) { chartReceitasDespesas.data.datasets[0].data = [rec, pag, saldo]; chartReceitasDespesas.update(); }
+            if (chartStatus) { chartStatus.data.datasets[0].data = [pend, andam, concl]; chartStatus.update(); }
+            const recorr = tarefasMes.filter(t => t.tipo === 'recorrente').length;
+            const event = tarefasMes.filter(t => t.tipo === 'eventual').length;
+            const outr = tarefasMes.filter(t => t.tipo === 'outro').length;
+            if (chartTipos) { chartTipos.data.datasets[0].data = [recorr, event, outr]; chartTipos.update(); }
+            const topPag = tarefasMes.filter(t => t.categoria === 'pagamento' && t.valor).sort((a,b) => parseFloat(b.valor) - parseFloat(a.valor)).slice(0, 10);
+            if (chartTopPagamentos) { chartTopPagamentos.data.labels = topPag.map(t => t.cliente.substring(0, 25)); chartTopPagamentos.data.datasets[0].data = topPag.map(t => parseFloat(t.valor)); chartTopPagamentos.update(); }
+            const fluxo = {}; dias.forEach(dia => fluxo[String(dia).padStart(2, '0')] = {rec: 0, pag: 0});
+            tarefasMes.forEach(t => { if (t.valor) { const d = t.data.split('-')[2].padStart(2, '0'); if (fluxo[d]) { t.categoria === 'recebimento' ? fluxo[d].rec += parseFloat(t.valor) : fluxo[d].pag += parseFloat(t.valor); } } });
+            if (chartFluxoCaixa) { chartFluxoCaixa.data.labels = Object.keys(fluxo); chartFluxoCaixa.data.datasets[0].data = Object.values(fluxo).map(d => d.rec); chartFluxoCaixa.data.datasets[1].data = Object.values(fluxo).map(d => d.pag); chartFluxoCaixa.update(); }
         }
 
-        function excluirTarefa() {
-            if (confirm('Deseja realmente excluir esta tarefa?')) {
-                // Se a tarefa foi gerada automaticamente, não excluir do array (ela é virtual)
-                // Apenas fechar o modal
-                if (!tarefaSelecionada.geradaAutomaticamente) {
-                    tarefas = tarefas.filter(t => t.id !== tarefaSelecionada.id);
-                    salvarDados(); // Persistir alterações
-                }
-                fecharModal();
-                renderizar();
-            }
-        }
-
-        // Inicializar
         inicializarDados();
     </script>
 </body>
